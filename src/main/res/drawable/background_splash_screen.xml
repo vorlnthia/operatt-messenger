@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:drawable="?colorSurfaceContainerHighest" />
-
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/splash_logo" />
-    </item>
+    <item android:drawable="@color/operatt_blue" />
+    <item
+        android:drawable="@drawable/operatt_launcher_foreground"
+        android:width="180dp"
+        android:height="180dp"
+        android:gravity="center" />
 </layer-list>
