@@ -2,6 +2,5 @@
 <resources>
     <string name="operatt_sign_out">Sign out of this device</string>
     <string name="operatt_sign_out_warning">Signing out removes this account, its local message history and encryption keys from this app. Make a backup first if you need to keep them. Your server account remains active. You will need your full account address and password to sign in again.</string>
-    <string name="operatt_intro">Your conversations, together.</string>
     <string name="operatt_login_help">Sign in with your username or full account address.</string>
 </resources>
