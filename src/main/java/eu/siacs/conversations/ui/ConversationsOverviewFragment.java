@@ -173,7 +173,10 @@ public class ConversationsOverviewFragment extends XmppFragment {
                 @Override
                 public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                     final var id = menuItem.getItemId();
-                    if (id == R.id.action_search) {
+                    if (id == R.id.operatt_switch_accounts) {
+                        startActivity(new Intent(getActivity(), ManageAccountActivity.class));
+                        return true;
+                    } else if (id == R.id.action_search) {
                         startActivity(new Intent(getActivity(), SearchActivity.class));
                         return true;
                     } else if (id == R.id.action_easy_invite) {
@@ -323,6 +326,10 @@ public class ConversationsOverviewFragment extends XmppFragment {
                         inflater, R.layout.fragment_conversations_overview, container, false);
         this.binding.fab.setOnClickListener(
                 (view) -> StartConversationActivity.launch(getActivity()));
+        this.binding.operattSearchButton.setOnClickListener(
+                (view) -> startActivity(new Intent(getActivity(), SearchActivity.class)));
+        this.binding.operattAccountsButton.setOnClickListener(
+                (view) -> startActivity(new Intent(getActivity(), ManageAccountActivity.class)));
 
         this.conversationsAdapter =
                 new ConversationAdapter(requireXmppActivity(), this.conversations);
