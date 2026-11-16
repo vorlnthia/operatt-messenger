@@ -2,6 +2,5 @@
 <resources>
     <string name="operatt_sign_out">خروج از حساب روی این دستگاه</string>
     <string name="operatt_sign_out_warning">خروج، این حساب و تاریخچهٔ پیام‌ها و کلیدهای رمزنگاری آن را از برنامه حذف می‌کند. برای نگهداری آن‌ها ابتدا پشتیبان بگیر. حساب روی سرور فعال می‌ماند. برای ورود دوباره به آدرس کامل حساب و رمز نیاز داری.</string>
-    <string name="operatt_intro">گفتگوهای شما، در کنار هم.</string>
     <string name="operatt_login_help">با نام کاربری یا آدرس کامل حسابت وارد شو.</string>
 </resources>
