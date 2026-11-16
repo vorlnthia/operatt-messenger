@@ -40,8 +40,8 @@ jobs:
           xcodebuild -project Snikket.xcodeproj -scheme Snikket \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$RUNNER_TEMP/operatt-ios-build" \
-            -clonedSourcePackagesDirPath "$RUNNER_TEMP/snikket-ios/build/SourcePackages" \
+            -derivedDataPath "$RUNNER_TEMP/snikket-ios/build/DerivedData" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/snikket-ios/build/DerivedData/SourcePackages" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             build | tee "$RUNNER_TEMP/operatt-ios-build.log" | tail -n 90
 
@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APP="$RUNNER_TEMP/operatt-ios-build/Build/Products/Debug-iphonesimulator/Snikket.app"
+          APP="$RUNNER_TEMP/snikket-ios/build/DerivedData/Build/Products/Debug-iphonesimulator/Snikket.app"
           test -d "$APP"
           ditto -c -k --keepParent "$APP" "$RUNNER_TEMP/operatt-ios-simulator.zip"
 
