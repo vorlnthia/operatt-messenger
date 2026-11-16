@@ -116,9 +116,9 @@ android {
         versionCode 42167
         versionName "2.19.8r2"
         archivesBaseName += "-$versionName"
-        applicationId "org.snikket.android"
+        applicationId "com.operatt.messenger"
         resValue "string", "applicationId", applicationId
-        def appName = "Snikket"
+        def appName = "Operatt Messenger"
         resValue "string", "app_name", appName
         buildConfigField "String", "APP_NAME", "\"$appName\""
     }
