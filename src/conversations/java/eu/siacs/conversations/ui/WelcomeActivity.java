@@ -116,29 +116,17 @@ public class WelcomeActivity extends XmppActivity
         Activities.setStatusAndNavigationBarColors(this, binding.getRoot());
         setSupportActionBar(binding.toolbar);
         configureActionBar(getSupportActionBar(), false);
-        binding.learnMore.setOnClickListener(v -> {
-            final Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://snikket.org/app/learn/?ref=app"));
-            try {
-                startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(this,R.string.no_application_found_to_open_link, Toast.LENGTH_LONG).show();
-            }
-                });
-        binding.useExisting.setOnClickListener(
-                v -> {
-                    final List<Account> accounts = xmppConnectionService.getAccounts();
-                    Intent intent = new Intent(this, EditAccountActivity.class);
-                    intent.putExtra(EditAccountActivity.EXTRA_FORCE_REGISTER, false);
-                    if (accounts.size() == 1) {
-                        intent.putExtra("jid", accounts.get(0).getJid().asBareJid().toString());
-                        intent.putExtra("init", true);
-                    } else if (!accounts.isEmpty()) {
-                        intent = new Intent(this, ManageAccountActivity.class);
-                    }
-                    addInviteUri(intent);
-                    startActivity(intent);
-                });
+        binding.createAccount.setOnClickListener(v -> {
+            final Intent intent = new Intent(this, MagicCreateActivity.class);
+            addInviteUri(intent);
+            startActivity(intent);
+        });
+        binding.useExisting.setOnClickListener(v -> {
+            final Intent intent = new Intent(this, EditAccountActivity.class);
+            intent.putExtra(EditAccountActivity.EXTRA_FORCE_REGISTER, false);
+            addInviteUri(intent);
+            startActivity(intent);
+        });
     }
 
     @Override

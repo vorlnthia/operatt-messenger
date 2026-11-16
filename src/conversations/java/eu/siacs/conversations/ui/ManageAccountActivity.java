@@ -207,6 +207,9 @@ public class ManageAccountActivity extends XmppActivity
             case R.id.action_add_account:
                 startActivity(new Intent(this, EditAccountActivity.class));
                 break;
+            case R.id.action_operatt_create_account:
+                startActivity(new Intent(this, MagicCreateActivity.class));
+                break;
             case R.id.action_import_backup:
                 if (hasStoragePermission(REQUEST_IMPORT_BACKUP)) {
                     startActivity(new Intent(this, ImportBackupActivity.class));
