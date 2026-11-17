@@ -677,7 +677,7 @@ public class ConversationsActivity extends XmppActivity
             if (composing) {
                 actionBar.setSubtitle(R.string.operatt_typing);
             } else if (conversation.getContact().getShownStatus()
-                    != eu.siacs.conversations.entities.Presence.Availability.OFFLINE) {
+                    != im.conversations.android.xmpp.model.stanza.Presence.Availability.OFFLINE) {
                 actionBar.setSubtitle(R.string.presence_online);
             } else if (this.mShowLastUserInteraction) {
                 final String observed = UIHelper.lastUserInteraction(
