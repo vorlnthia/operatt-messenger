@@ -2,10 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:defaultValue="@integer/automatic_message_deletion"
+        android:defaultValue="604800"
         android:icon="@drawable/ic_calendar_month_24dp"
         android:key="recurring_backup"
         android:title="@string/pref_backup_recurring" />
+
+    <Preference
+        android:selectable="false"
+        android:summary="@string/operatt_weekly_backup_note" />
 
     <Preference
         android:icon="@drawable/ic_archive_24dp"

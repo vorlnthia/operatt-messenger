@@ -46,6 +46,23 @@
                     app:icon="@drawable/ic_person_add_24dp" />
             </LinearLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/operatt_account_filter_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="start|center_vertical"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/operatt_select_account"
+                android:textColor="?colorPrimary"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_person_add_24dp"
+                app:iconTint="?colorPrimary" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"

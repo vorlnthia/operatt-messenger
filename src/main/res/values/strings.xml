@@ -1153,4 +1153,8 @@
     <string name="operatt_background_category">Battery and background delivery</string>
     <string name="operatt_background_mode_title">Keep connection active in background</string>
     <string name="operatt_background_mode_summary">Uses more battery but helps deliver calls and messages immediately. When off, without push support, background delivery may be delayed or missed.</string>
+    <string name="operatt_select_account">Choose account</string>
+    <string name="operatt_manage_accounts">Manage accounts / Add account</string>
+    <string name="operatt_cloud_history_warning">Cloud-compatible messages are not end-to-end encrypted. Your server administrator can read them. Enable OMEMO for private chats.</string>
+    <string name="operatt_weekly_backup_note">Encrypted backups run approximately weekly. Backups cover account data and local messages; photos and files require a separate media backup. Do not delete server history based only on this backup.</string>
 </resources>
