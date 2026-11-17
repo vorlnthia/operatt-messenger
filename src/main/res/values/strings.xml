@@ -1228,4 +1228,14 @@
     <string name="operatt_stickers">Stickers</string>
     <string name="operatt_send_sticker">Send sticker</string>
     <string name="operatt_message_placeholder">Message</string>
+    <string name="operatt_connected">Connected</string>
+    <string name="operatt_connecting">Connecting…</string>
+    <string name="operatt_disconnected">Not connected</string>
+    <string name="operatt_night_mode">Night mode</string>
+    <string name="operatt_new_group">New group</string>
+    <string name="operatt_saved_messages">Saved messages</string>
+    <string name="operatt_username_hint">Username (e.g. @username)</string>
+    <string name="operatt_request_location">Request location</string>
+    <string name="operatt_request_location_explained">Ask the person in this conversation to share their location? They must choose to share it from their phone.</string>
+    <string name="operatt_location_request_message">Where are you?</string>
 </resources>

@@ -15,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Strings;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.databinding.DialogEnterJidBinding;
+import eu.siacs.conversations.ui.util.OperattHandle;
 import eu.siacs.conversations.services.XmppConnectionService;
 import eu.siacs.conversations.ui.adapter.KnownHostsAdapter;
 import eu.siacs.conversations.ui.interfaces.OnBackendConnected;
@@ -115,7 +116,7 @@ public class EnterJidDialog extends DialogFragment implements OnBackendConnected
         }
         sanityCheckJid = getArguments().getBoolean(SANITY_CHECK_JID, false);
 
-        DelayedHintHelper.setHint(R.string.account_settings_example_jabber_id, binding.jid);
+        DelayedHintHelper.setHint(R.string.operatt_username_hint, binding.jid);
 
         final String account = getArguments().getString(ACCOUNT_KEY);
         if (Strings.isNullOrEmpty(account)) {
@@ -163,7 +164,7 @@ public class EnterJidDialog extends DialogFragment implements OnBackendConnected
         }
         final Jid contactJid;
         try {
-            contactJid = Jid.ofUserInput(binding.jid.getText().toString().trim());
+            contactJid = Jid.ofUserInput(OperattHandle.resolve(binding.jid.getText().toString()));
         } catch (final IllegalArgumentException e) {
             binding.jidLayout.setError(getActivity().getString(R.string.invalid_jid));
             return;

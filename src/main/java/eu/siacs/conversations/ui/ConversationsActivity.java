@@ -660,6 +660,17 @@ public class ConversationsActivity extends XmppActivity
         } else {
             actionBar.setSubtitle(null);
         }
+        final Account.State connectionState = conversation.getAccount().getStatus();
+        final CharSequence contactSubtitle = actionBar.getSubtitle();
+        if (connectionState == Account.State.ONLINE) {
+            actionBar.setSubtitle(getString(R.string.operatt_connected)
+                    + (contactSubtitle != null && contactSubtitle.length() > 0
+                            ? " · " + contactSubtitle : ""));
+        } else if (connectionState == Account.State.CONNECTING) {
+            actionBar.setSubtitle(R.string.operatt_connecting);
+        } else {
+            actionBar.setSubtitle(R.string.operatt_disconnected);
+        }
         actionBar.setDisplayHomeAsUpEnabled(true);
         if (clickable) {
             ToolbarUtils.setActionBarOnClickListener(

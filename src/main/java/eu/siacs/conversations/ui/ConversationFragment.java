@@ -586,6 +586,8 @@ public class ConversationFragment extends XmppFragment
                     final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
                     final MenuItem menuMute = menu.findItem(R.id.action_mute);
                     final MenuItem menuUnmute = menu.findItem(R.id.action_unmute);
+                    final MenuItem requestLocation = menu.findItem(R.id.action_request_contact_location);
+                    requestLocation.setVisible(c != null && c.getMode() == Conversation.MODE_SINGLE && !c.withSelf());
                     final MenuItem menuCall = menu.findItem(R.id.action_call);
                     final MenuItem menuOngoingCall = menu.findItem(R.id.action_ongoing_call);
                     final MenuItem menuVideoCall = menu.findItem(R.id.action_video_call);
@@ -675,6 +677,9 @@ public class ConversationFragment extends XmppFragment
                         case R.id.attach_record_voice:
                         case R.id.attach_location:
                             handleAttachmentSelection(menuItem);
+                            break;
+                        case R.id.action_request_contact_location:
+                            requestContactLocation();
                             break;
                         case R.id.action_my_coordinates:
                             attachFile(ATTACHMENT_CHOICE_LOCATION);
@@ -1659,6 +1664,23 @@ public class ConversationFragment extends XmppFragment
         return Math.round(dimension * getResources().getDisplayMetrics().density);
     }
 
+    /** Sends a request only; the other participant must explicitly share their GPS location. */
+    private void requestContactLocation() {
+        if (conversation == null || conversation.getMode() != Conversation.MODE_SINGLE
+                || conversation.withSelf()) return;
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.operatt_request_location)
+                .setMessage(R.string.operatt_request_location_explained)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.operatt_request_location, (dialog, which) -> {
+                    final Message request = new Message(conversation,
+                            getString(R.string.operatt_location_request_message),
+                            conversation.getNextEncryption());
+                    Message.configurePrivateMessage(request);
+                    requireXmppActivity().xmppConnectionService.sendMessage(request);
+                }).show();
+    }
+
     private void showAttachmentSheet() {
         final BottomSheetDialog sheet = new BottomSheetDialog(requireContext());
         final LinearLayout content = new LinearLayout(requireContext());
@@ -1675,16 +1697,16 @@ public class ConversationFragment extends XmppFragment
                 R.drawable.ic_image_24dp, R.drawable.ic_camera_alt_24dp,
                 R.drawable.ic_description_24dp, R.drawable.ic_location_pin_24dp,
                 R.drawable.ic_image_24dp, R.drawable.ic_mic_24dp,
-                R.drawable.ic_videocam_24dp};
+                R.drawable.ic_videocam_24dp, R.drawable.ic_location_pin_24dp};
         final int[] titles = {
                 R.string.attach_choose_picture, R.string.attach_take_picture,
                 R.string.choose_file, R.string.send_location,
                 R.string.operatt_create_sticker, R.string.attach_record_voice,
-                R.string.attach_record_video};
+                R.string.attach_record_video, R.string.operatt_request_location};
         final int[] actions = {
                 ATTACHMENT_CHOICE_CHOOSE_IMAGE, ATTACHMENT_CHOICE_TAKE_PHOTO,
                 ATTACHMENT_CHOICE_CHOOSE_FILE, ATTACHMENT_CHOICE_LOCATION,
-                -1, ATTACHMENT_CHOICE_RECORD_VOICE, ATTACHMENT_CHOICE_RECORD_VIDEO};
+                -1, ATTACHMENT_CHOICE_RECORD_VOICE, ATTACHMENT_CHOICE_RECORD_VIDEO, -2};
         for (int row = 0; row < 2; row++) {
             final LinearLayout line = new LinearLayout(requireContext());
             line.setOrientation(LinearLayout.HORIZONTAL);
@@ -1716,7 +1738,9 @@ public class ConversationFragment extends XmppFragment
                 line.addView(tile, new LinearLayout.LayoutParams(0, -1, 1));
                 tile.setOnClickListener(v -> {
                     sheet.dismiss();
-                    if (actions[index] == -1) {
+                    if (actions[index] == -2) {
+                        requestContactLocation();
+                    } else if (actions[index] == -1) {
                         final Intent editor = new Intent(requireContext(), StickerStudioActivity.class);
                         editor.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
                         startActivityForResult(editor, ATTACHMENT_CHOICE_CHOOSE_FILE);

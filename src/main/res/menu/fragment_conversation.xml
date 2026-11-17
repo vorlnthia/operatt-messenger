@@ -88,6 +88,10 @@
                 android:title="@string/send_location" />
         </menu>
     </item>
+    <item android:id="@+id/action_request_contact_location"
+        android:orderInCategory="38"
+        android:title="@string/operatt_request_location"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_my_coordinates"
         android:icon="@drawable/ic_location_pin_24dp"
