@@ -757,10 +757,12 @@ public class RtpSessionActivity extends XmppActivity
         final Optional<VideoTrack> remoteVideo = jingleRtpConnection.getRemoteVideoTrack();
         if (remoteVideo.isPresent()) {
             remoteVideo.get().removeSink(binding.remoteVideo);
+            remoteVideo.get().removeSink(binding.localVideo);
         }
         final Optional<VideoTrack> localVideo = jingleRtpConnection.getLocalVideoTrack();
         if (localVideo.isPresent()) {
             localVideo.get().removeSink(binding.localVideo);
+            localVideo.get().removeSink(binding.remoteVideo);
         }
     }
 
