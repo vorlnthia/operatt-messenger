@@ -79,14 +79,14 @@ public class ModerationManager extends AbstractManager {
     /** Request XEP-0424 message retraction from the other person's client.
      * It is best effort: remote clients and servers may keep a copy.
      */
-    public boolean retractOwnMessage(final eu.siacs.conversations.entities.Message message) {
+    public boolean retractMessageForEveryone(final eu.siacs.conversations.entities.Message message) {
         if (!(message.getConversation() instanceof Conversation conversation)
                 || conversation.getMode() != Conversation.MODE_SINGLE
-                || message.getStatus() == eu.siacs.conversations.entities.Message.STATUS_RECEIVED
                 || message.getStatus() == eu.siacs.conversations.entities.Message.STATUS_SEND_FAILED) {
             return false;
         }
-        final String id = message.isCarbon() ? message.getRemoteMsgId() : message.getUuid();
+        final String id = (message.getStatus() == eu.siacs.conversations.entities.Message.STATUS_RECEIVED || message.isCarbon())
+                ? message.getRemoteMsgId() : message.getUuid();
         if (Strings.isNullOrEmpty(id) || conversation.getAddress() == null) {
             return false;
         }
@@ -107,6 +107,10 @@ public class ModerationManager extends AbstractManager {
     }
 
     /** Refuse retraction of another sender\'s messages in a private conversation. */
+    public boolean retractOwnMessage(final eu.siacs.conversations.entities.Message message) {
+        return retractMessageForEveryone(message);
+    }
+
     public void handlePrivateRetraction(final Message packet, final Jid counterpart) {
         if (packet.getType() != Message.Type.CHAT || counterpart == null) return;
         final var retract = packet.getExtension(Retract.class);
@@ -121,8 +125,13 @@ public class ModerationManager extends AbstractManager {
         final boolean sentByUs = packet.fromAccount(getAccount());
         final boolean targetReceived = target.getStatus() == eu.siacs.conversations.entities.Message.STATUS_RECEIVED;
         if (sentByUs == targetReceived) {
-            Log.w(Config.LOGTAG, "Rejected attempt to retract a message from another sender");
-            return;
+            final boolean allowedByAuthor = !sentByUs && !targetReceived
+                    && eu.siacs.conversations.services.PeerDeletePolicy.isAllowed(
+                            service, getAccount(), counterpart);
+            if (!allowedByAuthor) {
+                Log.w(Config.LOGTAG, "Rejected unauthorized third-party retraction");
+                return;
+            }
         }
         conversation.remove(target);
         this.service.getNotificationService().clear(target);
