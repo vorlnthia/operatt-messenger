@@ -181,6 +181,9 @@ public class ConversationsOverviewFragment extends XmppFragment {
                     if (id == R.id.operatt_switch_accounts) {
                         startActivity(new Intent(getActivity(), ManageAccountActivity.class));
                         return true;
+                    } else if (id == R.id.operatt_call_history) {
+                        startActivity(new Intent(getActivity(), CallHistoryActivity.class));
+                        return true;
                     } else if (id == R.id.operatt_sticker_studio) {
                         startActivity(new Intent(getActivity(), StickerStudioActivity.class));
                         return true;
