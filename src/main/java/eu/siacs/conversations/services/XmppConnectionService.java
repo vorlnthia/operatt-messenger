@@ -715,7 +715,10 @@ public class XmppConnectionService extends Service {
         if (SystemClock.elapsedRealtime() - mLastExpiryRun.get() >= Config.EXPIRY_INTERVAL) {
             expireOldMessages();
         }
-        return START_STICKY;
+        // An idle service with no enabled accounts must not be resurrected by Android.
+        // Live calls still use the foreground service and retain microphone/camera.
+        return hasEnabledAccounts() || ongoingCall.get() != null
+                ? START_STICKY : START_NOT_STICKY;
     }
 
     private void rejectRtpSession(final String sessionId) {
@@ -1491,13 +1494,24 @@ public class XmppConnectionService extends Service {
     }
 
     private void scheduleNextIdlePing() {
-        final long timeToWake = SystemClock.elapsedRealtime() + (Config.IDLE_PING_INTERVAL * 1000);
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) {
             return;
         }
         final Intent intent = new Intent(this, SystemEventReceiver.class);
         intent.setAction(ACTION_IDLE_PING);
+        if (!hasEnabledAccounts()) {
+            // Do not wake the processor every idle interval after sign-out.
+            final PendingIntent previous = PendingIntent.getBroadcast(
+                    this, 0, intent, PendingIntent.FLAG_NO_CREATE
+                            | (s() ? PendingIntent.FLAG_IMMUTABLE : 0));
+            if (previous != null) {
+                alarmManager.cancel(previous);
+                previous.cancel();
+            }
+            return;
+        }
+        final long timeToWake = SystemClock.elapsedRealtime() + (Config.IDLE_PING_INTERVAL * 1000);
         try {
             final PendingIntent pendingIntent =
                     PendingIntent.getBroadcast(

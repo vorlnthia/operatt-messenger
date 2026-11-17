@@ -1188,4 +1188,37 @@
     <string name="operatt_check_family_location">Aile konumunu kontrol et</string>
     <string name="operatt_family_location_requested">Konum sorgusu gönderildi. Paylaşım izni ve yakın tarihli konum varsa haritada görüntülenecektir.</string>
     <string name="operatt_family_location_unavailable">Aile konumunu sorgulamak için bağlanın.</string>
+    <string name="operatt_story_title">Hikâyeler</string>
+    <string name="operatt_story_subtitle">24 saatlik özel paylaşımlar</string>
+    <string name="operatt_story_text">Metin</string>
+    <string name="operatt_story_photo">Fotoğraf</string>
+    <string name="operatt_story_video">Video</string>
+    <string name="operatt_story_active">Son hikâyeler</string>
+    <string name="operatt_story_archive">Arşiv</string>
+    <string name="operatt_story_highlights">Öne çıkanlar</string>
+    <string name="operatt_story_mine">Hikâyem</string>
+    <string name="operatt_story_sign_in">Hikâyeler için hesabınıza bağlanın.</string>
+    <string name="operatt_story_caption">Hikâye metni yazın…</string>
+    <string name="operatt_story_new">Yeni hikâye</string>
+    <string name="operatt_story_privacy">Bu hikâyeyi kimler görebilir?</string>
+    <string name="operatt_story_no_contacts">En az bir kişi seçin.</string>
+    <string name="operatt_story_failed">Hikâye yayınlanamadı.</string>
+    <string name="operatt_story_uploading">Medya yükleniyor…</string>
+    <string name="operatt_story_published">Hikâye paylaşıldı.</string>
+    <string name="operatt_story_invalid_media">Medya geçersiz veya 40 MB sınırını aşıyor.</string>
+    <string name="operatt_story_manage">Hikâyeyi yönet</string>
+    <string name="operatt_story_reply">Hikâyeye yanıtla</string>
+    <string name="operatt_story_reply_hint">Yanıtınızı yazın…</string>
+    <string name="operatt_story_reply_sent">Yanıt gönderildi.</string>
+    <string name="operatt_story_edit">Açıklamayı düzenle</string>
+    <string name="operatt_story_add_highlight">Öne çıkanlara ekle</string>
+    <string name="operatt_story_unhighlight">Öne çıkanlardan çıkar</string>
+    <string name="operatt_story_viewers">%1$d görüntüleme</string>
+    <string name="operatt_story_no_views">Henüz görüntüleme yok</string>
+    <string name="operatt_story_delete_confirm">Hikâye kaldırılsın mı? Yüklenen medya sunucuda kalabilir.</string>
+    <string name="operatt_typing">Yazıyor…</string>
+    <string name="operatt_presence_unknown">Çevrimdışı veya son görülme bilinmiyor</string>
+    <string name="operatt_story_close">Kapat</string><string name="operatt_story_send">Gönder</string>
+    <string name="operatt_delete_local">Benim için sil</string>
+    <string name="operatt_delete_local_notice">Bu mesaj yalnızca bu cihazdan silinsin mi? Diğer cihazlardaki kopyalar kalabilir.</string>
 </resources>

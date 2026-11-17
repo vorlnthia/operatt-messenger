@@ -1260,4 +1260,37 @@
     <string name="operatt_check_family_location">Check family location</string>
     <string name="operatt_family_location_requested">Location check sent. If your contact has approved sharing and a recent position is available, it will appear here on the map.</string>
     <string name="operatt_family_location_unavailable">Connect to check family location.</string>
+    <string name="operatt_story_title">Stories</string>
+    <string name="operatt_story_subtitle">Private moments, shared for 24 hours</string>
+    <string name="operatt_story_text">Text</string>
+    <string name="operatt_story_photo">Photo</string>
+    <string name="operatt_story_video">Video</string>
+    <string name="operatt_story_active">Recent</string>
+    <string name="operatt_story_archive">Archive</string>
+    <string name="operatt_story_highlights">Highlights</string>
+    <string name="operatt_story_mine">My story</string>
+    <string name="operatt_story_sign_in">Connect an account to see and share stories.</string>
+    <string name="operatt_story_caption">Write a caption or status…</string>
+    <string name="operatt_story_new">New story</string>
+    <string name="operatt_story_privacy">Choose who can see this story</string>
+    <string name="operatt_story_no_contacts">Select at least one saved contact.</string>
+    <string name="operatt_story_failed">Could not publish the story. Check the network and server.</string>
+    <string name="operatt_story_uploading">Uploading story media…</string>
+    <string name="operatt_story_published">Story shared with selected contacts.</string>
+    <string name="operatt_story_invalid_media">Unsupported media or file exceeds the limit of 40 MB.</string>
+    <string name="operatt_story_manage">Manage story</string>
+    <string name="operatt_story_reply">Reply to story</string>
+    <string name="operatt_story_reply_hint">Write a reply…</string>
+    <string name="operatt_story_reply_sent">Story reply sent.</string>
+    <string name="operatt_story_edit">Edit caption</string>
+    <string name="operatt_story_add_highlight">Add to highlights</string>
+    <string name="operatt_story_unhighlight">Remove from highlights</string>
+    <string name="operatt_story_viewers">%1$d viewers</string>
+    <string name="operatt_story_no_views">No views yet</string>
+    <string name="operatt_story_delete_confirm">Remove this story from selected contacts’ feeds? Uploaded media may remain on the media host.</string>
+    <string name="operatt_typing">Typing…</string>
+    <string name="operatt_presence_unknown">Offline or last seen unavailable</string>
+    <string name="operatt_story_close">Close</string><string name="operatt_story_send">Send</string>
+    <string name="operatt_delete_local">Delete for me</string>
+    <string name="operatt_delete_local_notice">Remove this message from this device only? Your other devices or the recipient may still retain their copies.</string>
 </resources>

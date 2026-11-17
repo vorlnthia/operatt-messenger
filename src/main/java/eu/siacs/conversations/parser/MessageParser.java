@@ -333,6 +333,22 @@ public class MessageParser extends AbstractParser
             selfAddressed = false;
         }
 
+        // Story updates are account-scoped and accepted only from real direct peers.
+        // No chat preview or notification is generated for story control stanzas.
+        if (!isCarbon && !selfAddressed && !isTypeGroupChat
+                && status == eu.siacs.conversations.entities.Message.STATUS_RECEIVED) {
+            final String storyNs = eu.siacs.conversations.services.OperattStoryManager.NS;
+            Element storyEvent = packet.findChild("story", storyNs);
+            if (storyEvent == null) storyEvent = packet.findChild("story-delete", storyNs);
+            if (storyEvent == null) storyEvent = packet.findChild("story-view", storyNs);
+            if (storyEvent != null) {
+                eu.siacs.conversations.services.OperattStoryManager.handleIncoming(
+                        mXmppConnectionService, account, counterpart, storyEvent);
+                mXmppConnectionService.updateConversationUi();
+                return;
+            }
+        }
+
         // Operatt family requests are processed only as live, direct peer stanzas.
         // Archived, carbon-copied and group messages cannot trigger a location reply.
         if (query == null && !isCarbon && !selfAddressed && !isTypeGroupChat
@@ -740,6 +756,11 @@ public class MessageParser extends AbstractParser
                 getManager(DeliveryReceiptManager.class).processRequest(packet, query);
             }
 
+            if (eu.siacs.conversations.services.OperattLocalDelete.hidden(
+                    mXmppConnectionService, account, conversation, message)) {
+                conversation.remove(message);
+                return;
+            }
             mXmppConnectionService.databaseBackend.createMessage(message);
             final HttpConnectionManager manager =
                     this.mXmppConnectionService.getHttpConnectionManager();

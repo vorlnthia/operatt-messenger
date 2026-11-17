@@ -662,15 +662,31 @@ public class ConversationsActivity extends XmppActivity
             actionBar.setSubtitle(null);
         }
         final Account.State connectionState = conversation.getAccount().getStatus();
-        final CharSequence contactSubtitle = actionBar.getSubtitle();
-        if (connectionState == Account.State.ONLINE) {
-            actionBar.setSubtitle(getString(R.string.operatt_connected)
-                    + (contactSubtitle != null && contactSubtitle.length() > 0
-                            ? " · " + contactSubtitle : ""));
-        } else if (connectionState == Account.State.CONNECTING) {
+        if (connectionState == Account.State.CONNECTING) {
             actionBar.setSubtitle(R.string.operatt_connecting);
-        } else {
+        } else if (connectionState != Account.State.ONLINE) {
             actionBar.setSubtitle(R.string.operatt_disconnected);
+        } else if (conversation.getMode() == Conversational.MODE_SINGLE) {
+            // These states describe the CONTACT, not our own XMPP connection.
+            final var connection = conversation.getAccount().getXmppConnection();
+            final boolean composing = connection != null
+                    && connection.getManager(
+                        eu.siacs.conversations.xmpp.manager.ChatStateManager.class)
+                        .getIncoming(conversation.getAddress())
+                    == im.conversations.android.xmpp.model.state.Composing.class;
+            if (composing) {
+                actionBar.setSubtitle(R.string.operatt_typing);
+            } else if (conversation.getContact().getShownStatus()
+                    != im.conversations.android.xmpp.model.stanza.Presence.Availability.OFFLINE) {
+                actionBar.setSubtitle(R.string.presence_online);
+            } else if (this.mShowLastUserInteraction) {
+                final String observed = UIHelper.lastUserInteraction(
+                        this, conversation.getContact().getLastUserInteraction());
+                actionBar.setSubtitle(observed == null
+                        ? getString(R.string.operatt_presence_unknown) : observed);
+            } else {
+                actionBar.setSubtitle(R.string.operatt_presence_unknown);
+            }
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
         if (clickable) {

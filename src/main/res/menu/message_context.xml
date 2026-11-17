@@ -11,6 +11,10 @@
         android:visible="false"/>
 
     <item
+        android:id="@+id/operatt_delete_local"
+        android:title="@string/operatt_delete_local"
+        android:visible="false" />
+    <item
         android:id="@+id/operatt_retract_message"
         android:title="@string/operatt_delete_everyone"
         android:visible="false" />

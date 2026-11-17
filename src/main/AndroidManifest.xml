@@ -182,6 +182,9 @@
         <activity
             android:name=".ui.ShareLocationActivity"
             android:label="@string/title_activity_share_location" />
+        <activity android:name=".ui.OperattStoriesActivity"
+            android:exported="false"
+            android:label="@string/operatt_story_title" />
         <activity android:name=".ui.OperattCallHistoryActivity"
             android:exported="false" android:label="@string/operatt_call_history_title" />
         <activity

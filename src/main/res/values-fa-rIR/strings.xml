@@ -1059,4 +1059,37 @@
     <string name="operatt_check_family_location">بررسی موقعیت خانواده</string>
     <string name="operatt_family_location_requested">درخواست موقعیت ارسال شد. اگر مخاطب اجازه داده باشد و موقعیت تازه موجود باشد، روی نقشه نمایش داده می‌شود.</string>
     <string name="operatt_family_location_unavailable">برای بررسی موقعیت خانواده به شبکه متصل شوید.</string>
+    <string name="operatt_story_title">استوری‌ها</string>
+    <string name="operatt_story_subtitle">لحظه‌های خصوصی برای ۲۴ ساعت</string>
+    <string name="operatt_story_text">متن</string>
+    <string name="operatt_story_photo">عکس</string>
+    <string name="operatt_story_video">ویدیو</string>
+    <string name="operatt_story_active">جدیدترین‌ها</string>
+    <string name="operatt_story_archive">آرشیو</string>
+    <string name="operatt_story_highlights">هایلایت‌ها</string>
+    <string name="operatt_story_mine">استوری من</string>
+    <string name="operatt_story_sign_in">برای مشاهدهٔ استوری به حساب متصل شوید.</string>
+    <string name="operatt_story_caption">متن استوری را بنویسید…</string>
+    <string name="operatt_story_new">استوری جدید</string>
+    <string name="operatt_story_privacy">مخاطبان این استوری را انتخاب کنید</string>
+    <string name="operatt_story_no_contacts">حداقل یک مخاطب انتخاب کنید.</string>
+    <string name="operatt_story_failed">انتشار استوری ناموفق بود.</string>
+    <string name="operatt_story_uploading">در حال بارگذاری رسانه…</string>
+    <string name="operatt_story_published">استوری منتشر شد.</string>
+    <string name="operatt_story_invalid_media">رسانه معتبر نیست یا بیشتر از ۴۰ مگابایت است.</string>
+    <string name="operatt_story_manage">مدیریت استوری</string>
+    <string name="operatt_story_reply">پاسخ به استوری</string>
+    <string name="operatt_story_reply_hint">پاسختان را بنویسید…</string>
+    <string name="operatt_story_reply_sent">پاسخ ارسال شد.</string>
+    <string name="operatt_story_edit">ویرایش متن</string>
+    <string name="operatt_story_add_highlight">افزودن به هایلایت</string>
+    <string name="operatt_story_unhighlight">حذف از هایلایت</string>
+    <string name="operatt_story_viewers">%1$d بازدید</string>
+    <string name="operatt_story_no_views">هنوز بازدیدی ندارد</string>
+    <string name="operatt_story_delete_confirm">استوری حذف شود؟ رسانهٔ بارگذاری‌شده ممکن است همچنان روی سرور باقی بماند.</string>
+    <string name="operatt_typing">در حال تایپ…</string>
+    <string name="operatt_presence_unknown">آفلاین یا آخرین بازدید نامشخص</string>
+    <string name="operatt_story_close">بستن</string><string name="operatt_story_send">ارسال</string>
+    <string name="operatt_delete_local">حذف فقط برای من</string>
+    <string name="operatt_delete_local_notice">این پیام فقط از این دستگاه حذف شود؟ ممکن است کپی‌های دیگر باقی بمانند.</string>
 </resources>
