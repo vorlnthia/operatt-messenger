@@ -1418,6 +1418,8 @@ public class ConversationFragment extends XmppFragment
             final MenuItem deleteFile = menu.findItem(R.id.delete_file);
             final MenuItem moderateMessage = menu.findItem(R.id.moderation);
             final MenuItem retractMessage = menu.findItem(R.id.operatt_retract_message);
+            final MenuItem deleteLocalMessage = menu.findItem(R.id.operatt_delete_local);
+            deleteLocalMessage.setVisible(m.getType() != Message.TYPE_STATUS && !m.isDeleted());
             final MenuItem showErrorMessage = menu.findItem(R.id.show_error_message);
             final boolean unInitiatedButKnownSize = MessageUtils.unInitiatedButKnownSize(m);
             final boolean showError =
@@ -1636,6 +1638,27 @@ public class ConversationFragment extends XmppFragment
             }
             case R.id.moderation -> {
                 moderate(selectedMessage);
+                yield true;
+            }
+            case R.id.operatt_delete_local -> {
+                final Message target = selectedMessage;
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.operatt_delete_local)
+                        .setMessage(R.string.operatt_delete_local_notice)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                            final var service = requireXmppActivity().xmppConnectionService;
+                            if (target.getConversation() instanceof Conversation conversation
+                                    && service != null) {
+                                eu.siacs.conversations.services.OperattLocalDelete.remember(
+                                        requireContext(), target);
+                                conversation.remove(target);
+                                service.getNotificationService().clear(target);
+                                service.databaseBackend.deleteMessage(target.getUuid());
+                                service.updateConversationUi();
+                                refresh();
+                            }
+                        }).show();
                 yield true;
             }
             case R.id.operatt_retract_message -> {
