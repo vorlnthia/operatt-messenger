@@ -1245,4 +1245,16 @@
     <string name="operatt_route_streaming">External audio</string>
     <string name="operatt_route_unavailable">No audio route available</string>
     <string name="operatt_background_mode_summary_v7">Off saves battery and removes the persistent foreground activity, but messages and incoming calls may be delayed without a configured push gateway. On keeps the connection awake for more reliable calls.</string>
+    <string name="operatt_call_history_title">Call history</string>
+    <string name="operatt_call_history_hint">Missed calls, durations and redial</string>
+    <string name="operatt_call_filter_all">All</string>
+    <string name="operatt_call_filter_missed">Missed</string>
+    <string name="operatt_call_filter_outgoing">Outgoing</string>
+    <string name="operatt_call_empty">No recent calls for this account</string>
+    <string name="operatt_call_incoming">Incoming call</string>
+    <string name="operatt_call_outgoing">Outgoing call</string>
+    <string name="operatt_call_missed">Missed call</string>
+    <string name="operatt_call_redial">Call again</string>
+    <string name="operatt_call_voice">Voice call</string>
+    <string name="operatt_call_video">Video call</string>
 </resources>

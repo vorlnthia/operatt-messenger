@@ -502,6 +502,7 @@ public class ConversationsOverviewFragment extends XmppFragment {
         binding.operattSettingsNotifications.setOnClickListener(v -> openSettings("notifications"));
         binding.operattSettingsStorage.setOnClickListener(v -> openSettings("storage"));
         binding.operattSettingsBackup.setOnClickListener(v -> openSettings("backup"));
+        binding.operattSettingsCalls.setOnClickListener(v -> startActivity(new Intent(requireContext(), OperattCallHistoryActivity.class)));
         binding.operattSettingsConnection.setOnClickListener(v -> openSettings("connection"));
         binding.operattSettingsAccounts.setOnClickListener(v -> startActivity(new Intent(requireContext(), ManageAccountActivity.class)));
         binding.operattSettingsStickers.setOnClickListener(v -> startActivity(new Intent(requireContext(), StickerStudioActivity.class)));

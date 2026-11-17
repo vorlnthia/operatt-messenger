@@ -142,6 +142,21 @@
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
  android:text="@string/operatt_settings_storage_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
 </LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_calls" android:layout_width="match_parent"
+ android:layout_height="wrap_content" android:orientation="horizontal"
+ android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="14dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+ <ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_call_24dp" app:tint="?colorPrimary"/>
+ <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+ android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:text="@string/operatt_call_history_title" android:textColor="?colorOnSurface"
+ android:textSize="16sp" android:fontFamily="sans-serif-medium"/>
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:layout_marginTop="3dp" android:text="@string/operatt_call_history_hint"
+ android:textColor="?colorOnSurfaceVariant" android:textSize="12sp"/>
+ </LinearLayout></LinearLayout>
 <LinearLayout android:id="@+id/operatt_settings_backup" android:layout_width="match_parent" android:layout_height="wrap_content"
  android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
  android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
