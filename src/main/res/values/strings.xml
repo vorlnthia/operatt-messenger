@@ -1184,4 +1184,6 @@
         <item>@string/operatt_backup_settings</item>
         <item>@string/action_settings</item>
     </string-array>
+    <string name="operatt_log_out">Log out (keep history)</string>
+    <string name="operatt_log_out_notice">Stop this account and clear its saved password on this device? Local conversations and files are kept. You must enter your password to sign in again. Other accounts stay unchanged.</string>
 </resources>
