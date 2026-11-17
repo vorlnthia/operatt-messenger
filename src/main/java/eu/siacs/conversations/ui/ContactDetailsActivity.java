@@ -394,6 +394,57 @@ public class ContactDetailsActivity extends OmemoActivity
             case R.id.action_custom_notifications:
                 configureCustomNotifications(contact);
                 break;
+            case R.id.action_family_request_location:
+                if (contact != null && contact.getAccount().isOnlineAndConnected()) {
+                    eu.siacs.conversations.services.FamilyLocationManager.request(
+                            contact.getAccount(), contact.getAddress());
+                    Toast.makeText(this,
+                            "Location check sent. A shared, recent position will appear on the map in chat.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Connect to send a location check.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.action_family_share_location:
+                if (contact == null) break;
+                final boolean alreadyAllowed =
+                        eu.siacs.conversations.services.FamilyLocationManager.isAuthorized(
+                            this, contact.getAccount(), contact.getAddress());
+                if (alreadyAllowed) {
+                    new MaterialAlertDialogBuilder(this)
+                            .setTitle("Stop sharing location")
+                            .setMessage("Disable automatic responses to this contact's location checks?")
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                                eu.siacs.conversations.services.FamilyLocationManager.setAuthorized(
+                                    this, contact.getAccount(), contact.getAddress(), false);
+                                invalidateOptionsMenu();
+                            }).show();
+                } else {
+                    new MaterialAlertDialogBuilder(this)
+                            .setTitle("Family location sharing")
+                            .setMessage("Allow this contact to request your recent device location without a new approval each time? Your position is only returned when a location fix from the last 10 minutes is available. You can revoke access here at any time.")
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                                if (!eu.siacs.conversations.services.FamilyLocationManager
+                                            .hasLocationPermission(this)) {
+                                    requestPermissions(new String[] {
+                                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                                    }, 8917);
+                                    Toast.makeText(this,
+                                        "After granting location permission, select this action again.",
+                                        Toast.LENGTH_LONG).show();
+                                } else {
+                                    eu.siacs.conversations.services.FamilyLocationManager
+                                        .setAuthorized(this, contact.getAccount(),
+                                                       contact.getAddress(), true);
+                                    invalidateOptionsMenu();
+                                }
+                            }).show();
+                }
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -415,6 +466,14 @@ public class ContactDetailsActivity extends OmemoActivity
         final MenuItem edit = menu.findItem(R.id.action_edit_contact);
         final MenuItem delete = menu.findItem(R.id.action_delete_contact);
         final MenuItem customNotifications = menu.findItem(R.id.action_custom_notifications);
+        final MenuItem familyShare = menu.findItem(R.id.action_family_share_location);
+        if (contact != null) {
+            final boolean authorized =
+                    eu.siacs.conversations.services.FamilyLocationManager.isAuthorized(
+                            this, contact.getAccount(), contact.getAddress());
+            familyShare.setTitle(authorized ? "Stop sharing family location"
+                    : "Allow family location requests");
+        }
         customNotifications.setVisible(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R);
         if (contact == null) {
             return true;
