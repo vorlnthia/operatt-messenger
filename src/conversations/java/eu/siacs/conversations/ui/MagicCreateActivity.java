@@ -183,7 +183,7 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                 } else {
                     jid = Jid.ofLocalAndDomain(username, this.domain);
                 }
-                binding.fullJid.setText(getString(R.string.your_full_jid_will_be, jid.toString()));
+                binding.fullJid.setText(eu.siacs.conversations.ui.util.OperattHandle.display(jid.toString()));
                 binding.usernameLayout.setError(null);
             } catch (final IllegalArgumentException e) {
                 binding.fullJid.setVisibility(View.INVISIBLE);
