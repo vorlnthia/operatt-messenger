@@ -1,6 +1,11 @@
 package eu.siacs.conversations.services;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+import androidx.core.app.NotificationCompat;
+import eu.siacs.conversations.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -45,6 +50,11 @@ public final class FamilyLocationManager {
                                      final Jid contact, final boolean enabled) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
                 .putBoolean("allow|" + key(account, contact), enabled).apply();
+        visibleNotice(context, contact, enabled
+                ? "Family location sharing enabled"
+                : "Family location sharing disabled",
+                enabled ? "Your recent location can be shared with this contact upon request. You can revoke access in contact details."
+                        : "This contact no longer has permission to request your location.");
     }
 
     public static boolean hasLocationPermission(final Context context) {
@@ -70,6 +80,8 @@ public final class FamilyLocationManager {
                                      final Jid sender, final Element request) {
         if (sender == null || request == null || request.getAttribute("id") == null) return;
         if (!isAuthorized(service, account, sender) || !hasLocationPermission(service)) return;
+        visibleNotice(service, sender, "Family location check",
+                "An approved family contact requested your recent device location.");
         final SharedPreferences preferences = service.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         final String throttleKey = "sent|" + key(account, sender);
         final long now = System.currentTimeMillis();
@@ -110,5 +122,42 @@ public final class FamilyLocationManager {
                 new eu.siacs.conversations.entities.Message(
                         conversation, geoUri, conversation.getNextEncryption());
         service.sendMessage(locationMessage);
+        visibleNotice(service, sender, "Location shared with family",
+                "A recent position was sent to this contact. You can disable sharing in contact details.");
     }
+    private static void visibleNotice(Context context, Jid contact,
+                                      String title, String description) {
+        try {
+            final NotificationManager manager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null) return;
+            final String channelId = "operatt_family_location";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                final NotificationChannel channel = new NotificationChannel(channelId,
+                        "Family location activity", NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription("Shows when family location sharing is enabled or used");
+                manager.createNotificationChannel(channel);
+            }
+            if (Build.VERSION.SDK_INT >= 33
+                    && ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                    .setSmallIcon(R.drawable.ic_location_pin_24dp)
+                    .setContentTitle(title)
+                    .setContentText(description)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                            contact.asBareJid() + ": " + description))
+                    .setAutoCancel(true)
+                    .setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            manager.notify(Math.abs(contact.asBareJid().hashCode() % 100000)+21000,
+                    builder.build());
+        } catch (RuntimeException ignored) {
+            // Notifications may be disabled by the device owner, never bypass that choice.
+        }
+    }
+
 }
