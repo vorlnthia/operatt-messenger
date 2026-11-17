@@ -93,6 +93,12 @@
         android:title="@string/operatt_request_location"
         app:showAsAction="never" />
     <item
+        android:id="@+id/operatt_check_family_location"
+        android:orderInCategory="37"
+        android:icon="@drawable/ic_location_pin_24dp"
+        android:title="@string/operatt_check_family_location"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_my_coordinates"
         android:icon="@drawable/ic_location_pin_24dp"
         android:orderInCategory="39"
