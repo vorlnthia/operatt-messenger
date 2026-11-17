@@ -9,6 +9,7 @@
 
         <ListView
             android:id="@+id/messages_view"
+            android:background="?colorSurfaceContainerLow"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/snackbar"
@@ -48,12 +49,13 @@
 
         <RelativeLayout
             android:id="@+id/textsend"
+            android:background="?colorSurface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp">
+            android:paddingVertical="8dp">
 
             <LinearLayout
                 android:id="@+id/input_layout"
@@ -119,8 +121,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                android:backgroundTint="?colorSurfaceContainerHigh"
+                android:backgroundTint="?colorPrimary"
                 android:contentDescription="@string/send_message"
+                app:iconTint="?colorOnPrimary"
                 app:icon="@drawable/ic_send_24dp"
                 app:iconSize="32dp" />
         </RelativeLayout>

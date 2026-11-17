@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:background="?colorSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,12 +23,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/operatt_search_button"
-                    style="?attr/materialButtonOutlinedStyle"
+                    style="?attr/materialButtonFilledTonalStyle"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/operatt_search_chats"
+                    android:backgroundTint="?colorSurfaceContainer"
                     android:textColor="?colorOnSurfaceVariant"
                     app:cornerRadius="24dp"
                     app:icon="@drawable/ic_search_24dp"
@@ -35,11 +37,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/operatt_accounts_button"
-                    style="?attr/materialIconButtonOutlinedStyle"
+                    style="?attr/materialIconButtonFilledTonalStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="8dp"
                     android:contentDescription="@string/operatt_switch_accounts"
+                    app:iconTint="?colorPrimary"
                     app:icon="@drawable/ic_person_add_24dp" />
             </LinearLayout>
 
@@ -65,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_forum_thin_48dp"
-                app:tint="?colorPrimaryFixedDim" />
+                app:tint="?colorPrimary" />
 
             <TextView
                 android:id="@+id/empty_chat_hint_text"
@@ -84,6 +87,9 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="16dp"
             android:text="@string/start_chat"
+            android:backgroundTint="?colorPrimary"
+            android:textColor="?colorOnPrimary"
+            app:iconTint="?colorOnPrimary"
             app:icon="@drawable/ic_chat_24dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
