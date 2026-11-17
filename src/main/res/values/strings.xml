@@ -1257,4 +1257,7 @@
     <string name="operatt_call_redial">Call again</string>
     <string name="operatt_call_voice">Voice call</string>
     <string name="operatt_call_video">Video call</string>
+    <string name="operatt_check_family_location">Check family location</string>
+    <string name="operatt_family_location_requested">Location check sent. If your contact has approved sharing and a recent position is available, it will appear here on the map.</string>
+    <string name="operatt_family_location_unavailable">Connect to check family location.</string>
 </resources>
