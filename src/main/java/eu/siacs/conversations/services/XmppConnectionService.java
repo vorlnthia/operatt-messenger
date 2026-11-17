@@ -715,7 +715,11 @@ public class XmppConnectionService extends Service {
         if (SystemClock.elapsedRealtime() - mLastExpiryRun.get() >= Config.EXPIRY_INTERVAL) {
             expireOldMessages();
         }
-        return START_STICKY;
+        // Do not ask Android to resurrect a network service after all accounts
+        // were disabled or signed out. Active accounts still use the usual
+        // reconnect/push path, so incoming calls remain enabled.
+        return hasEnabledAccounts() || ongoingCall.get() != null
+                ? START_STICKY : START_NOT_STICKY;
     }
 
     private void rejectRtpSession(final String sessionId) {
@@ -1491,13 +1495,24 @@ public class XmppConnectionService extends Service {
     }
 
     private void scheduleNextIdlePing() {
-        final long timeToWake = SystemClock.elapsedRealtime() + (Config.IDLE_PING_INTERVAL * 1000);
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) {
             return;
         }
         final Intent intent = new Intent(this, SystemEventReceiver.class);
         intent.setAction(ACTION_IDLE_PING);
+        // Avoid a wakeup every ten minutes when no account can receive anything.
+        if (!hasEnabledAccounts()) {
+            final PendingIntent oldAlarm = PendingIntent.getBroadcast(
+                    this, 0, intent, PendingIntent.FLAG_NO_CREATE
+                            | (s() ? PendingIntent.FLAG_IMMUTABLE : 0));
+            if (oldAlarm != null) {
+                alarmManager.cancel(oldAlarm);
+                oldAlarm.cancel();
+            }
+            return;
+        }
+        final long timeToWake = SystemClock.elapsedRealtime() + (Config.IDLE_PING_INTERVAL * 1000);
         try {
             final PendingIntent pendingIntent =
                     PendingIntent.getBroadcast(
