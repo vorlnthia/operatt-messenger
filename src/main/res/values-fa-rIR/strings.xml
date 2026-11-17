@@ -1089,4 +1089,5 @@
     <string name="operatt_story_delete_confirm">استوری حذف شود؟ رسانهٔ بارگذاری‌شده ممکن است همچنان روی سرور باقی بماند.</string>
     <string name="operatt_typing">در حال تایپ…</string>
     <string name="operatt_presence_unknown">آفلاین یا آخرین بازدید نامشخص</string>
+    <string name="operatt_story_close">بستن</string><string name="operatt_story_send">ارسال</string>
 </resources>
