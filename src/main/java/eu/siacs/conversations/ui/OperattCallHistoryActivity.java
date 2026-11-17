@@ -1,6 +1,9 @@
 package eu.siacs.conversations.ui;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -42,16 +45,45 @@ public final class OperattCallHistoryActivity extends XmppActivity {
     private BaseAdapter adapter;
     private TextView empty;
     private int filter = 0;
+    private int ink, muted, backdrop, accent, surface, outline, error, chip, selectedChip;
+    private final List<MaterialButton> filterButtons = new ArrayList<>();
+
+    private GradientDrawable rounded(final int fill, final int radius) {
+        final GradientDrawable shape = new GradientDrawable();
+        shape.setColor(fill);
+        shape.setCornerRadius(dp(radius));
+        shape.setStroke(dp(1), outline);
+        return shape;
+    }
+    private void loadColors() {
+        final boolean night = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        ink = getColor(night ? R.color.operatt_dark_onSurface : R.color.operatt_light_onSurface);
+        muted = getColor(night ? R.color.operatt_dark_onSurfaceVariant
+                : R.color.operatt_light_onSurfaceVariant);
+        backdrop = getColor(night ? R.color.operatt_dark_background
+                : R.color.operatt_light_background);
+        accent = getColor(night ? R.color.operatt_dark_primary : R.color.operatt_light_primary);
+        surface = getColor(night ? R.color.operatt_dark_surface : R.color.operatt_light_surface);
+        outline = getColor(night ? R.color.operatt_dark_outlineVariant
+                : R.color.operatt_light_outlineVariant);
+        error = getColor(night ? R.color.operatt_dark_error : R.color.operatt_light_error);
+        chip = getColor(night ? R.color.operatt_dark_surfaceContainer
+                : R.color.operatt_light_surfaceContainer);
+        selectedChip = getColor(night ? R.color.operatt_dark_primaryContainer
+                : R.color.operatt_light_primaryContainer);
+    }
     private int dp(int n) { return Math.round(n * getResources().getDisplayMetrics().density); }
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        loadColors();
         final LinearLayout root = new LinearLayout(this);
-        root.setOrientation(1); root.setBackgroundColor(0xff0b1629);
+        root.setOrientation(1); root.setBackgroundColor(backdrop);
         final MaterialToolbar bar = new MaterialToolbar(this);
         bar.setTitle(R.string.operatt_call_history_title);
-        bar.setTitleTextColor(0xfff1f4fa);
-        bar.setNavigationIconTint(0xfff1f4fa);
+        bar.setTitleTextColor(ink);
+        bar.setNavigationIconTint(ink);
         root.addView(bar, new LinearLayout.LayoutParams(-1, dp(64)));
         setContentView(root); setSupportActionBar(bar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -64,11 +96,14 @@ public final class OperattCallHistoryActivity extends XmppActivity {
             final int target=i;
             final MaterialButton tab=new MaterialButton(this);
             tab.setText(tabNames[i]);tab.setAllCaps(false);
+            tab.setTextColor(ink);
+            tab.setBackgroundTintList(ColorStateList.valueOf(i == 0 ? selectedChip : chip));
+            filterButtons.add(tab);
             buttons.addView(tab,new LinearLayout.LayoutParams(0,-1,1));
             tab.setOnClickListener(v->{filter=target;applyFilter();});
         }
         empty = new TextView(this);
-        empty.setText(R.string.operatt_call_empty);empty.setTextColor(0xffabb9cc);
+        empty.setText(R.string.operatt_call_empty);empty.setTextColor(muted);
         empty.setGravity(Gravity.CENTER);empty.setPadding(10,25,10,25);
         root.addView(empty);
         final ListView list = new ListView(this);
@@ -84,13 +119,13 @@ public final class OperattCallHistoryActivity extends XmppActivity {
                 row.setPadding(dp(14),dp(12),dp(12),dp(12));
                 final TextView glyph=new TextView(OperattCallHistoryActivity.this);
                 glyph.setText(e.incoming()?"↙":"↗");glyph.setTextSize(26);
-                glyph.setTextColor(e.incoming()&&!e.successful()?0xfff17c85:0xff6cb1ee);
+                glyph.setTextColor(e.incoming()&&!e.successful()?error:accent);
                 glyph.setGravity(Gravity.CENTER);
                 row.addView(glyph,new LinearLayout.LayoutParams(dp(48),dp(48)));
                 final LinearLayout info=new LinearLayout(OperattCallHistoryActivity.this);
                 info.setOrientation(1);
                 final TextView label=new TextView(OperattCallHistoryActivity.this);
-                label.setText(e.name());label.setTextSize(16);label.setTextColor(0xffeff4fa);
+                label.setText(e.name());label.setTextSize(16);label.setTextColor(ink);
                 label.setTypeface(null,1);
                 info.addView(label);
                 final TextView detail=new TextView(OperattCallHistoryActivity.this);
@@ -98,7 +133,7 @@ public final class OperattCallHistoryActivity extends XmppActivity {
                     R.string.operatt_call_missed):R.string.operatt_call_outgoing;
                 detail.setText(getString(kind)+" · "+DateFormat.getDateTimeInstance(3,3).format(e.when())
                     +(e.duration()>0?" · "+e.duration()/1000+"s":""));
-                detail.setTextSize(12);detail.setTextColor(0xffa7b9c9);
+                detail.setTextSize(12);detail.setTextColor(muted);
                 info.addView(detail);
                 row.addView(info,new LinearLayout.LayoutParams(0,-2,1));
                 final MaterialButton call=new MaterialButton(OperattCallHistoryActivity.this);
@@ -107,7 +142,11 @@ public final class OperattCallHistoryActivity extends XmppActivity {
                 call.setOnClickListener(v->redial(e));
                 row.addView(call,new LinearLayout.LayoutParams(dp(50),dp(50)));
                 row.setOnClickListener(v->openChat(e));
-                return row;
+                row.setBackground(rounded(surface,18));
+                final LinearLayout shell = new LinearLayout(OperattCallHistoryActivity.this);
+                shell.setPadding(dp(12),dp(4),dp(12),dp(4));
+                shell.addView(row, new LinearLayout.LayoutParams(-1,-2));
+                return shell;
             }
         };
         list.setAdapter(adapter);
@@ -148,6 +187,9 @@ public final class OperattCallHistoryActivity extends XmppActivity {
         visible.clear();
         for(Entry e:all)if(filter==0||(filter==1&&e.incoming()&&!e.successful())||
             (filter==2&&!e.incoming()))visible.add(e);
+        for(int i=0;i<filterButtons.size();i++)
+            filterButtons.get(i).setBackgroundTintList(ColorStateList.valueOf(
+                    i==filter?selectedChip:chip));
         if(adapter!=null)adapter.notifyDataSetChanged();
         if(empty!=null)empty.setVisibility(visible.isEmpty()?View.VISIBLE:View.GONE);
     }

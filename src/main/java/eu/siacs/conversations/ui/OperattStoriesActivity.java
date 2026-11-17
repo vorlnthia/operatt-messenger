@@ -60,8 +60,33 @@ import java.util.concurrent.Executors;
 public final class OperattStoriesActivity extends XmppActivity {
     private static final int PICK_MEDIA=7935;
     private static final long MAX_FILE_SIZE=40L*1024L*1024L;
-    private static final int DARK=0xff132e40, MUTED=0xff647683,
-            SURFACE=0xfff9fbfb, ACCENT=0xff0d5367;
+    // Resolve from the same design tokens as the rest of the app.
+    // The previous Stories panel used hard-coded light colors even in dark mode.
+    private int DARK, MUTED, SURFACE, ACCENT;
+    private int CARD, CHIP, SELECTED_CHIP, HERO_CHIP, SEEN_AVATAR;
+
+    private void loadAtelierColors() {
+        final boolean night = (getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        DARK = getColor(night ? R.color.operatt_dark_onSurface
+                : R.color.operatt_light_onSurface);
+        MUTED = getColor(night ? R.color.operatt_dark_onSurfaceVariant
+                : R.color.operatt_light_onSurfaceVariant);
+        SURFACE = getColor(night ? R.color.operatt_dark_background
+                : R.color.operatt_light_background);
+        ACCENT = getColor(R.color.operatt_light_primary);
+        CARD = getColor(night ? R.color.operatt_dark_surface
+                : R.color.operatt_light_surface);
+        CHIP = getColor(night ? R.color.operatt_dark_surfaceContainerHigh
+                : R.color.operatt_light_surfaceContainerHigh);
+        SELECTED_CHIP = getColor(night ? R.color.operatt_dark_primaryContainer
+                : R.color.operatt_light_primaryContainer);
+        HERO_CHIP = getColor(night ? R.color.operatt_dark_surfaceContainer
+                : R.color.operatt_light_surfaceContainer);
+        SEEN_AVATAR = getColor(night ? R.color.operatt_dark_outline
+                : R.color.operatt_light_outline);
+    }
     private static final String SELECTED_ACCOUNT="operatt_selected_account";
     private final ExecutorService executor=Executors.newSingleThreadExecutor();
     private final List<OperattStoryManager.Story> visible=new ArrayList<>();
@@ -92,13 +117,14 @@ public final class OperattStoriesActivity extends XmppActivity {
     private Button action(String value){
         Button b=new Button(this);
         b.setText(value);b.setTextSize(12);b.setAllCaps(false);
-        b.setTextColor(DARK);b.setBackground(surface(0xffe6eff0,18));
+        b.setTextColor(DARK);b.setBackground(surface(CHIP,18));
         b.setMinHeight(0);b.setMinimumHeight(0);
         return b;
     }
 
     @Override public void onCreate(@Nullable Bundle state){
         super.onCreate(state);
+        loadAtelierColors();
         setTitle(R.string.operatt_story_title);
         LinearLayout root=new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -114,7 +140,7 @@ public final class OperattStoriesActivity extends XmppActivity {
         LinearLayout composer=new LinearLayout(this);
         composer.setOrientation(LinearLayout.HORIZONTAL);
         composer.setPadding(dp(12),dp(12),dp(12),dp(12));
-        composer.setBackground(surface(0xffeaf1f0,23));
+        composer.setBackground(surface(HERO_CHIP,23));
         Button textStory=action(getString(R.string.operatt_story_text));
         Button photoStory=action(getString(R.string.operatt_story_photo));
         Button videoStory=action(getString(R.string.operatt_story_video));
@@ -156,11 +182,11 @@ public final class OperattStoriesActivity extends XmppActivity {
                 row.setOrientation(LinearLayout.HORIZONTAL);
                 row.setGravity(Gravity.CENTER_VERTICAL);
                 row.setPadding(dp(12),dp(13),dp(12),dp(13));
-                row.setBackground(surface(0xffffffff,18));
+                row.setBackground(surface(CARD,18));
                 TextView initial=label(s.isOwn()?"O":s.owner.substring(0,1).toUpperCase(Locale.ROOT),
                         20,0xffffffff,true);
                 initial.setGravity(Gravity.CENTER);
-                initial.setBackground(surface(s.seen?0xff879da7:ACCENT,35));
+                initial.setBackground(surface(s.seen?SEEN_AVATAR:ACCENT,35));
                 LinearLayout.LayoutParams avatar=new LinearLayout.LayoutParams(dp(47),dp(47));
                 row.addView(initial,avatar);
                 LinearLayout texts=new LinearLayout(OperattStoriesActivity.this);
@@ -225,9 +251,9 @@ public final class OperattStoriesActivity extends XmppActivity {
                     +" · "+getString(R.string.operatt_story_subtitle));
         } else subtitle.setText(R.string.operatt_story_sign_in);
         adapter.notifyDataSetChanged();
-        activeButton.setBackground(surface("active".equals(currentTab)?0xffc4dfe1:0xffe6eff0,18));
-        archiveButton.setBackground(surface("archive".equals(currentTab)?0xffc4dfe1:0xffe6eff0,18));
-        highlightButton.setBackground(surface("highlights".equals(currentTab)?0xffc4dfe1:0xffe6eff0,18));
+        activeButton.setBackground(surface("active".equals(currentTab)?SELECTED_CHIP:CHIP,18));
+        archiveButton.setBackground(surface("archive".equals(currentTab)?SELECTED_CHIP:CHIP,18));
+        highlightButton.setBackground(surface("highlights".equals(currentTab)?SELECTED_CHIP:CHIP,18));
     }
 
     private void create(String type){

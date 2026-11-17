@@ -67,7 +67,7 @@
    <LinearLayout android:layout_width="match_parent" android:layout_height="74dp"
     android:paddingHorizontal="18dp" android:gravity="center_vertical" android:orientation="horizontal">
     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-     android:text="@string/operatt_tab_contacts" android:textColor="?colorOnSurface" android:textSize="27sp" android:textStyle="bold"/>
+     android:text="@string/operatt_tab_contacts" android:textColor="?colorOnSurface" android:textSize="27sp" android:fontFamily="sans-serif-medium" android:letterSpacing="-0.015" android:textStyle="bold"/>
     <com.google.android.material.button.MaterialButton android:id="@+id/operatt_contact_add_button"
      style="?attr/materialIconButtonOutlinedStyle" android:layout_width="50dp" android:layout_height="50dp"
      android:contentDescription="@string/operatt_new_chat" app:icon="@drawable/ic_person_add_24dp" app:iconTint="?colorPrimary"/>
@@ -84,7 +84,7 @@
    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="14dp" android:orientation="vertical">
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="5dp"
      android:paddingTop="14dp" android:paddingBottom="20dp"
-     android:text="@string/operatt_tab_settings" android:textSize="29sp" android:textStyle="bold" android:textColor="?colorOnSurface"/>
+     android:text="@string/operatt_tab_settings" android:textSize="28sp" android:fontFamily="sans-serif-medium" android:letterSpacing="-0.015" android:textStyle="bold" android:textColor="?colorOnSurface"/>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
      android:orientation="vertical" android:background="@drawable/operatt_home_card">
      <LinearLayout android:id="@+id/operatt_settings_account" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -210,11 +210,11 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
      android:paddingHorizontal="16dp" android:paddingTop="24dp" android:paddingBottom="20dp" android:gravity="center_horizontal">
      <com.google.android.material.imageview.ShapeableImageView android:id="@+id/operatt_profile_avatar"
-      android:layout_width="106dp" android:layout_height="106dp" android:contentDescription="@string/operatt_tab_profile"
+      android:layout_width="106dp" android:layout_height="106dp" android:elevation="3dp" android:contentDescription="@string/operatt_tab_profile"
       android:src="@drawable/ic_person_48dp" app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"/>
      <TextView android:id="@+id/operatt_profile_name" android:layout_width="match_parent" android:layout_height="wrap_content"
       android:layout_marginTop="14dp" android:gravity="center" android:text="@string/operatt_tab_profile"
-      android:textColor="?colorOnSurface" android:textSize="25sp" android:textStyle="bold"/>
+      android:textColor="?colorOnSurface" android:textSize="25sp" android:fontFamily="sans-serif-medium" android:letterSpacing="-0.015" android:textStyle="bold"/>
      <TextView android:id="@+id/operatt_profile_jid" android:layout_width="match_parent" android:layout_height="wrap_content"
       android:layout_marginTop="4dp" android:gravity="center" android:text="@string/operatt_select_account"
       android:textColor="?colorOnSurfaceVariant" android:textSize="14sp"/>
@@ -251,7 +251,7 @@
   android:layout_width="match_parent" android:layout_height="wrap_content"
   android:layout_marginHorizontal="18dp" android:layout_marginTop="3dp" android:layout_marginBottom="9dp"
   android:minHeight="68dp" android:background="@drawable/operatt_bottom_floating"
-  android:elevation="8dp" app:menu="@menu/operatt_bottom_navigation"
+  android:elevation="6dp" app:menu="@menu/operatt_bottom_navigation" app:itemHorizontalTranslationEnabled="false"
   app:labelVisibilityMode="labeled" app:itemIconSize="24dp"
   app:itemTextColor="@color/operatt_nav_icon_tint" app:itemIconTint="@color/operatt_nav_icon_tint"/>
 </LinearLayout></layout>

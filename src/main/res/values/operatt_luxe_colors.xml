@@ -1,1 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><resources><color name="operatt_luxe_navy">#07142E</color></resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches the monogram cutout across adaptive and legacy launcher icons. -->
+    <color name="operatt_luxe_navy">#102E3B</color>
+</resources>

@@ -48,18 +48,39 @@ public class UnifiedPushBroker {
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
 
     private final XmppConnectionService service;
+    private java.util.concurrent.ScheduledFuture<?> renewalFuture;
 
     public UnifiedPushBroker(final XmppConnectionService xmppConnectionService) {
         this.service = xmppConnectionService;
-        SCHEDULER.scheduleWithFixedDelay(
-                this::renewUnifiedPushEndpoints,
-                RENEWAL_INTERVAL,
-                RENEWAL_INTERVAL,
-                TimeUnit.MILLISECONDS);
+        // No renewal timer until the owner has explicitly configured a transport.
+        // In the default configuration this removes a needless hourly wakeup.
+    }
+
+    private synchronized void reconcileRenewalSchedule(final boolean enabled) {
+        if (enabled) {
+            if (renewalFuture == null || renewalFuture.isCancelled()
+                    || renewalFuture.isDone()) {
+                renewalFuture = SCHEDULER.scheduleWithFixedDelay(
+                        this::renewUnifiedPushEndpoints,
+                        RENEWAL_INTERVAL, RENEWAL_INTERVAL, TimeUnit.MILLISECONDS);
+            }
+        } else if (renewalFuture != null) {
+            renewalFuture.cancel(false);
+            renewalFuture = null;
+        }
+    }
+
+    public synchronized void stopPeriodicRenewal() {
+        if (renewalFuture != null) {
+            renewalFuture.cancel(false);
+            renewalFuture = null;
+        }
     }
 
     public void renewUnifiedPushEndpointsOnBind(final Account account) {
         final Optional<Transport> transportOptional = getTransport();
+        reconcileRenewalSchedule(transportOptional.isPresent()
+                && transportOptional.get().account.isEnabled());
         if (transportOptional.isPresent()) {
             final Transport transport = transportOptional.get();
             final Account transportAccount = transport.account;
@@ -86,6 +107,8 @@ public class UnifiedPushBroker {
     public Optional<Transport> renewUnifiedPushEndpoints(
             @Nullable final PushTargetMessenger pushTargetMessenger) {
         final Optional<Transport> transportOptional = getTransport();
+        reconcileRenewalSchedule(transportOptional.isPresent()
+                && transportOptional.get().account.isEnabled());
         if (transportOptional.isPresent()) {
             final Transport transport = transportOptional.get();
             if (transport.account.isEnabled()) {
@@ -220,7 +243,9 @@ public class UnifiedPushBroker {
     }
 
     public boolean reconfigurePushDistributor() {
-        final boolean enabled = getTransport().isPresent();
+        final Optional<Transport> transport = getTransport();
+        final boolean enabled = transport.isPresent();
+        reconcileRenewalSchedule(enabled && transport.get().account.isEnabled());
         setUnifiedPushDistributorEnabled(enabled);
         if (!enabled) {
             unregisterCurrentPushTargets();

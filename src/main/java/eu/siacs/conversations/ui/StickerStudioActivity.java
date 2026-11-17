@@ -43,6 +43,20 @@ public final class StickerStudioActivity extends AppCompatActivity {
     private LinearLayout savedStrip;
     private TextView hint;
     private boolean forChat;
+    private int ink, secondaryInk, backdrop, previewSurface;
+    private void loadColors() {
+        final boolean night = (getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        ink = getColor(night ? R.color.operatt_dark_onSurface
+                : R.color.operatt_light_onSurface);
+        secondaryInk = getColor(night ? R.color.operatt_dark_onSurfaceVariant
+                : R.color.operatt_light_onSurfaceVariant);
+        backdrop = getColor(night ? R.color.operatt_dark_background
+                : R.color.operatt_light_background);
+        previewSurface = getColor(night ? R.color.operatt_dark_surfaceContainer
+                : R.color.operatt_light_surfaceContainer);
+    }
     private final ActivityResultLauncher<String> choosePhoto = registerForActivityResult(
             new ActivityResultContracts.GetContent(), this::loadPhoto);
 
@@ -57,24 +71,25 @@ public final class StickerStudioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
+        loadColors();
         forChat = getIntent().getBooleanExtra(EXTRA_SEND_TO_CHAT, false);
         setTitle(R.string.operatt_create_sticker);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(16), dp(8), dp(16), dp(8));
-        root.setBackgroundColor(Color.rgb(246, 249, 252));
+        root.setBackgroundColor(backdrop);
 
         hint = new TextView(this);
         hint.setText(R.string.operatt_sticker_erase_hint);
-        hint.setTextColor(Color.DKGRAY);
+        hint.setTextColor(secondaryInk);
         hint.setTextSize(14);
         hint.setPadding(0, dp(8), 0, dp(12));
         root.addView(hint, new LinearLayout.LayoutParams(-1, -2));
 
         preview = new ImageView(this);
         preview.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        preview.setBackgroundColor(Color.rgb(225, 234, 241));
+        preview.setBackgroundColor(previewSurface);
         root.addView(preview, new LinearLayout.LayoutParams(-1, 0, 1));
         preview.setOnTouchListener((v, event) -> {
             if (event.getActionMasked() == MotionEvent.ACTION_UP && editable != null) {
@@ -117,7 +132,7 @@ public final class StickerStudioActivity extends AppCompatActivity {
 
         TextView galleryTitle = new TextView(this);
         galleryTitle.setText(R.string.operatt_sticker_saved);
-        galleryTitle.setTextColor(Color.BLACK);
+        galleryTitle.setTextColor(ink);
         galleryTitle.setTextSize(16);
         galleryTitle.setPadding(0, dp(14), 0, dp(6));
         root.addView(galleryTitle, new LinearLayout.LayoutParams(-1, -2));
@@ -136,6 +151,7 @@ public final class StickerStudioActivity extends AppCompatActivity {
         result.setText(text);
         result.setAllCaps(false);
         result.setTextSize(12);
+        result.setTextColor(ink);
         return result;
     }
 
@@ -232,7 +248,7 @@ public final class StickerStudioActivity extends AppCompatActivity {
         for (int index = 0; index < Math.min(files.length, 40); index++) {
             final File file = files[index];
             ImageButton thumb = new ImageButton(this);
-            thumb.setBackgroundColor(Color.rgb(235, 240, 245));
+            thumb.setBackgroundColor(previewSurface);
             thumb.setScaleType(ImageView.ScaleType.FIT_CENTER);
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inSampleSize = 4;
