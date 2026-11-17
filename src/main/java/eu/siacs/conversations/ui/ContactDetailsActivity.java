@@ -394,6 +394,24 @@ public class ContactDetailsActivity extends OmemoActivity
             case R.id.action_custom_notifications:
                 configureCustomNotifications(contact);
                 break;
+            case R.id.action_allow_mutual_delete:
+                if (contact == null) break;
+                final boolean mutualDeletionAllowed =
+                        eu.siacs.conversations.services.PeerDeletePolicy.isAllowed(
+                                this, contact.getAccount(), contact.getAddress());
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(mutualDeletionAllowed ? "Disable mutual deletion" : "Allow mutual deletion")
+                        .setMessage(mutualDeletionAllowed
+                                ? "Stop allowing this contact to remove messages you sent?"
+                                : "Allow this contact to delete your sent messages from this device? This applies only to this contact and can be revoked here.")
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                            eu.siacs.conversations.services.PeerDeletePolicy.setAllowed(
+                                    this, contact.getAccount(), contact.getAddress(),
+                                    !mutualDeletionAllowed);
+                            invalidateOptionsMenu();
+                        }).show();
+                break;
             case R.id.action_family_request_location:
                 if (contact != null && contact.getAccount().isOnlineAndConnected()) {
                     eu.siacs.conversations.services.FamilyLocationManager.request(
@@ -466,6 +484,14 @@ public class ContactDetailsActivity extends OmemoActivity
         final MenuItem edit = menu.findItem(R.id.action_edit_contact);
         final MenuItem delete = menu.findItem(R.id.action_delete_contact);
         final MenuItem customNotifications = menu.findItem(R.id.action_custom_notifications);
+        final MenuItem mutualDelete = menu.findItem(R.id.action_allow_mutual_delete);
+        if (contact != null) {
+            final boolean enabled =
+                    eu.siacs.conversations.services.PeerDeletePolicy.isAllowed(
+                            this, contact.getAccount(), contact.getAddress());
+            mutualDelete.setTitle(enabled ? "Disable mutual deletion"
+                    : "Allow this contact to delete my messages");
+        }
         final MenuItem familyShare = menu.findItem(R.id.action_family_share_location);
         if (contact != null) {
             final boolean authorized =
