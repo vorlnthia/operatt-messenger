@@ -109,6 +109,11 @@ public class CallHistoryActivity extends XmppActivity {
     }
 
     @Override
+    protected void refreshUiReal() {
+        // Call list data is refreshed when the XMPP backend connects.
+    }
+
+    @Override
     protected void onBackendConnected() {
         new Thread(() -> {
             final List<CallRow> loaded = new ArrayList<>();
@@ -128,7 +133,7 @@ public class CallHistoryActivity extends XmppActivity {
                     final Conversation conversation =
                             xmppConnectionService.findConversationByUuid(uuid);
                     final String name = conversation == null ? "Unknown contact"
-                            : conversation.getName();
+                            : conversation.getName().toString();
                     final String direction = incoming ? (call.successful ? "Incoming" : "Missed")
                             : (call.successful ? "Outgoing" : "Unanswered");
                     final String duration = call.successful
