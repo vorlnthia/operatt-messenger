@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
-        android:background="?colorSecondaryFixedDim"
+        android:background="?colorSurfaceContainerLow"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:descendantFocusability="blocksDescendants">
@@ -20,7 +20,7 @@
                 android:background="?android:selectableItemBackground"
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="11dp"
+                android:paddingVertical="12dp"
                 android:minHeight="76dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -69,7 +69,7 @@
                             android:maxLines="1"
                             android:minHeight="18sp"
                             android:text="@string/me"
-                            android:textColor="?colorOnSurfaceVariant"
+                            android:textColor="?colorPrimary"
                             android:visibility="visible" />
 
                         <LinearLayout
@@ -146,8 +146,8 @@
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="1dp"
                             android:visibility="gone"
-                            app:backgroundColor="?colorTertiaryContainer"
-                            app:textColor="?colorOnTertiaryContainer" />
+                            app:backgroundColor="?colorPrimary"
+                            app:textColor="?colorOnPrimary" />
 
                     </RelativeLayout>
 
@@ -157,6 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBaseline="@+id/conversation_name"
+                        android:textColor="?colorOnSurfaceVariant"
                         android:layout_alignParentEnd="true"
                         android:gravity="right"
                         tools:text="23:42" />
