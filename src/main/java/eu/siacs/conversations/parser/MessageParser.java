@@ -831,10 +831,14 @@ public class MessageParser extends AbstractParser
                 getManager(ReactionManager.class).processReactions(packet, counterpart, query);
             }
 
-            if (original.hasExtension(Retract.class)
-                    && originalFrom != null
-                    && originalFrom.isBareJid()) {
-                getManager(ModerationManager.class).handleRetraction(original);
+            if (original.hasExtension(Retract.class)) {
+                if (originalFrom != null && originalFrom.isBareJid()) {
+                    getManager(ModerationManager.class).handleRetraction(original);
+                } else if (original.getType()
+                        == im.conversations.android.xmpp.model.stanza.Message.Type.CHAT) {
+                    getManager(ModerationManager.class)
+                            .handlePrivateRetraction(original, counterpart);
+                }
             }
 
             // end no body

@@ -1157,4 +1157,7 @@
     <string name="operatt_manage_accounts">Manage accounts / Add account</string>
     <string name="operatt_cloud_history_warning">Cloud-compatible messages are not end-to-end encrypted. Your server administrator can read them. Enable OMEMO for private chats.</string>
     <string name="operatt_weekly_backup_note">Encrypted backups run approximately weekly. Backups cover account data and local messages; photos and files require a separate media backup. Do not delete server history based only on this backup.</string>
+    <string name="operatt_delete_everyone">Delete for everyone</string>
+    <string name="operatt_retract_warning">Request removal of this message from the other person\'s chat? Copies, screenshots, and server backups may remain, and some XMPP clients may ignore the request.</string>
+    <string name="operatt_retract_failed">Could not send deletion request. Check your connection.</string>
 </resources>

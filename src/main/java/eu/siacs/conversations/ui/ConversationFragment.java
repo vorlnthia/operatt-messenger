@@ -1368,6 +1368,7 @@ public class ConversationFragment extends XmppFragment
             final MenuItem cancelTransmission = menu.findItem(R.id.cancel_transmission);
             final MenuItem deleteFile = menu.findItem(R.id.delete_file);
             final MenuItem moderateMessage = menu.findItem(R.id.moderation);
+            final MenuItem retractMessage = menu.findItem(R.id.operatt_retract_message);
             final MenuItem showErrorMessage = menu.findItem(R.id.show_error_message);
             final boolean unInitiatedButKnownSize = MessageUtils.unInitiatedButKnownSize(m);
             final boolean showError =
@@ -1416,6 +1417,11 @@ public class ConversationFragment extends XmppFragment
                         isAckedModerationDisclaimer()
                                 ? R.string.moderate_delete
                                 : R.string.moderate_delete_dot_dot_dot);
+                retractMessage.setVisible(
+                        c.getMode() == Conversation.MODE_SINGLE
+                                && m.getStatus() != Message.STATUS_RECEIVED
+                                && m.getStatus() != Message.STATUS_SEND_FAILED
+                                && !deleted);
                 correctMessage.setVisible(
                         !showError
                                 && m.getType() == Message.TYPE_TEXT
@@ -1424,6 +1430,7 @@ public class ConversationFragment extends XmppFragment
                                 && singleOrOccupantId);
             } else {
                 moderateMessage.setVisible(false);
+                retractMessage.setVisible(false);
                 addReaction.setVisible(false);
                 correctMessage.setVisible(false);
             }
@@ -1579,6 +1586,23 @@ public class ConversationFragment extends XmppFragment
             }
             case R.id.moderation -> {
                 moderate(selectedMessage);
+                yield true;
+            }
+            case R.id.operatt_retract_message -> {
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.operatt_delete_everyone)
+                        .setMessage(R.string.operatt_retract_warning)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                            final var account = selectedMessage.getConversation().getAccount();
+                            final var connection = account.getXmppConnection();
+                            if (connection == null || !connection.getManager(ModerationManager.class)
+                                    .retractOwnMessage(selectedMessage)) {
+                                Toast.makeText(requireContext(), R.string.operatt_retract_failed, Toast.LENGTH_LONG).show();
+                            } else {
+                                refresh();
+                            }
+                        }).show();
                 yield true;
             }
             case R.id.show_error_message -> {
