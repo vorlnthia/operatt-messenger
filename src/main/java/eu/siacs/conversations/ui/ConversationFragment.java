@@ -53,6 +53,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import androidx.annotation.IdRes;
@@ -1694,7 +1695,7 @@ public class ConversationFragment extends XmppFragment
                 tile.setContentDescription(getString(titles[index]));
                 final ImageView icon = new ImageView(requireContext());
                 icon.setImageResource(icons[index]);
-                icon.setColorFilter(MaterialColors.getColor(content, com.google.android.material.R.attr.colorPrimary));
+                icon.setColorFilter(MaterialColors.getColor(content, androidx.appcompat.R.attr.colorPrimary));
                 final LinearLayout.LayoutParams ip = new LinearLayout.LayoutParams(toDp(36), toDp(36));
                 ip.bottomMargin = toDp(9);
                 tile.addView(icon, ip);
