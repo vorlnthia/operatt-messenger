@@ -643,6 +643,11 @@ public class ConversationFragment extends XmppFragment
                         case R.id.encryption_choice_none:
                             handleEncryptionSelection(menuItem);
                             break;
+                        case R.id.attach_create_sticker:
+                            final Intent studio = new Intent(requireContext(), StickerStudioActivity.class);
+                            studio.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
+                            startActivityForResult(studio, ATTACHMENT_CHOICE_CHOOSE_FILE);
+                            break;
                         case R.id.attach_choose_picture:
                         case R.id.attach_take_picture:
                         case R.id.attach_record_video:

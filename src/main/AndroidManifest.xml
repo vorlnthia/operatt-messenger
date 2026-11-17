@@ -172,6 +172,9 @@
         </receiver>
 
         <activity
+            android:name=".ui.StickerStudioActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.ImageViewerActivity"
             android:exported="false"
             android:theme="@style/Theme.Conversations3.FullScreen" />

@@ -1160,4 +1160,15 @@
     <string name="operatt_delete_everyone">Delete for everyone</string>
     <string name="operatt_retract_warning">Request removal of this message from the other person\'s chat? Copies, screenshots, and server backups may remain, and some XMPP clients may ignore the request.</string>
     <string name="operatt_retract_failed">Could not send deletion request. Check your connection.</string>
+    <string name="operatt_create_sticker">Create sticker</string>
+    <string name="operatt_sticker_choose_photo">Choose photo</string>
+    <string name="operatt_sticker_erase_hint">Tap a background area to erase matching pixels. The editor works best on plain backgrounds.</string>
+    <string name="operatt_sticker_undo">Undo</string>
+    <string name="operatt_sticker_save">Save sticker</string>
+    <string name="operatt_sticker_send">Save and attach</string>
+    <string name="operatt_sticker_saved">Saved stickers</string>
+    <string name="operatt_sticker_delete">Delete saved sticker?</string>
+    <string name="operatt_sticker_choose_first">Choose a photo first.</string>
+    <string name="operatt_sticker_failed">Unable to create sticker from this image.</string>
+    <string name="operatt_sticker_saved_ok">Sticker saved on this device.</string>
 </resources>

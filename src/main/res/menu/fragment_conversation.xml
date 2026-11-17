@@ -58,6 +58,11 @@
                 android:title="@string/choose_file" />
 
             <item
+                android:id="@+id/attach_create_sticker"
+                android:icon="@drawable/ic_image_24dp"
+                android:title="@string/operatt_create_sticker" />
+
+            <item
                 android:id="@+id/attach_choose_picture"
                 android:icon="@drawable/ic_image_24dp"
                 android:title="@string/attach_choose_picture" />
