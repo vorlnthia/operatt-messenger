@@ -1148,4 +1148,11 @@
     <string name="strong_transport_security">Güçlü ulaşım güvenliği</string>
     <string name="require_tls_v1_3">Tüm bağlantılar için TLS (Transport Layer Security) Protokolü Sürüm 1.3 gerektirir</string>
     <string name="empty_conversations_list_hint">Yeni bir sohbet başlattığınızda, burada listelendiğini göreceksiniz</string>
+    <string name="operatt_invite_code">Kayıt davet kodu</string>
+    <string name="operatt_invite_required">Sunucu tarafından verilen geçerli bir davet kodu gereklidir.</string>
+    <string name="operatt_invite_explanation">Sunucunun verdiği davet kodunu girin. Kodun doğrulaması sunucuda yapılır.</string>
+    <string name="operatt_my_coordinates">Koordinatlarım / Konum paylaş</string>
+    <string name="operatt_copy_coordinates">Kopyala</string>
+    <string name="operatt_coordinates_copied">Koordinatlar kopyalandı.</string>
+    <string name="operatt_coordinates_unavailable">Konum alınamadı. Konum iznini ve GPS'i açın.</string>
 </resources>

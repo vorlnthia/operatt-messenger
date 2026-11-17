@@ -1019,4 +1019,11 @@
     <string name="quicksy_wants_your_consent">این برنامه برای به‌کاربردن داده‌های شما نیازمند موافقت شماست</string>
     <string name="call_integration_not_available">یکپارچه‌سازی تماس تلفنی در دسترس نیست!</string>
     <string name="no_permission_to_place_call">اجازهٔ تماس تلفنی وجود ندارد</string>
+    <string name="operatt_invite_code">کد دعوت ثبت‌نام</string>
+    <string name="operatt_invite_required">کد دعوت معتبر از سرور لازم است.</string>
+    <string name="operatt_invite_explanation">کد دعوت صادرشده توسط سرور را وارد کنید. سرور باید آن را تأیید کند.</string>
+    <string name="operatt_my_coordinates">مختصات من / اشتراک موقعیت</string>
+    <string name="operatt_copy_coordinates">کپی</string>
+    <string name="operatt_coordinates_copied">مختصات کپی شد.</string>
+    <string name="operatt_coordinates_unavailable">موقعیت در دسترس نیست. مجوز مکان و مکان‌یابی گوشی را فعال کنید.</string>
 </resources>

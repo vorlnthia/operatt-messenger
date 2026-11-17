@@ -58,6 +58,8 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
         // token is needed only when the user entered the signup screen directly.
         binding.registrationCodeLayout.setVisibility(
                 this.preAuth == null ? View.VISIBLE : View.GONE);
+        binding.registrationCodeExplanation.setVisibility(
+                this.preAuth == null ? View.VISIBLE : View.GONE);
         binding.createAccount.setOnClickListener(
                 v -> {
                     try {
