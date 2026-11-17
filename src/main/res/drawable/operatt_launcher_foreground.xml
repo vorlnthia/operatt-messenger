@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M54,29 C70.6,29 83,40 83,54 C83,65.9 73.9,75.5 61.7,78.2 L74.5,87 L50.1,78.5 C35.1,76.9 25,67 25,54 C25,40 37.5,29 54,29 Z" />
-    <path
-        android:fillColor="#1A70E8"
-        android:pathData="M40,54 m-3,0 a3,3 0,1 0,6 0 a3,3 0,1 0,-6 0 M54,54 m-3,0 a3,3 0,1 0,6 0 a3,3 0,1 0,-6 0 M68,54 m-3,0 a3,3 0,1 0,6 0 a3,3 0,1 0,-6 0" />
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Operatt monogram: orbital communication O and an intentionally open tail. -->
+    <path android:fillColor="#FFF7F4EC"
+        android:pathData="M54,27 C72,27 84,39.5 84,54 C84,68.7 71.2,81 54,81 C48,81 42.5,79.6 37.7,77 L26,85 L30.1,71.8 C26.2,66.7 24,60.6 24,54 C24,39.5 36,27 54,27 Z"/>
+    <path android:fillColor="#FF092A3B"
+        android:pathData="M54,38 C64.1,38 72,45.3 72,54 C72,63.1 64,70 54,70 C44,70 36,63.1 36,54 C36,45.3 44,38 54,38 Z"/>
+    <path android:fillColor="#FFD8E5E9"
+        android:pathData="M46,54 m-2.6,0 a2.6,2.6 0,1 0,5.2 0 a2.6,2.6 0,1 0,-5.2 0
+                          M54,54 m-2.6,0 a2.6,2.6 0,1 0,5.2 0 a2.6,2.6 0,1 0,-5.2 0
+                          M62,54 m-2.6,0 a2.6,2.6 0,1 0,5.2 0 a2.6,2.6 0,1 0,-5.2 0"/>
+    <path android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFD2C3A5" android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M43,79 C64,83 86,69 88,48"/>
 </vector>
