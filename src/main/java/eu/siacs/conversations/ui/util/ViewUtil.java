@@ -16,6 +16,7 @@ import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.entities.DownloadableFile;
 import eu.siacs.conversations.persistance.FileBackend;
+import eu.siacs.conversations.ui.ImageViewerActivity;
 
 public class ViewUtil {
 
@@ -39,6 +40,10 @@ public class ViewUtil {
 
     private static void view(Context context, File file, String mime) {
         Log.d(Config.LOGTAG,"viewing "+file.getAbsolutePath()+" "+mime);
+        if (mime.startsWith("image/")) {
+            ImageViewerActivity.open(context, file);
+            return;
+        }
         final Intent openIntent = new Intent(Intent.ACTION_VIEW);
         final Uri uri;
         try {

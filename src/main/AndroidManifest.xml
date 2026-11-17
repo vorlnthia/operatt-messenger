@@ -172,6 +172,11 @@
         </receiver>
 
         <activity
+            android:name=".ui.ImageViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Conversations3.FullScreen" />
+
+        <activity
             android:name=".ui.ShareLocationActivity"
             android:label="@string/title_activity_share_location" />
         <activity
