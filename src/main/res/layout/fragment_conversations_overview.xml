@@ -23,7 +23,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/operatt_search_button"
-                    style="?attr/materialButtonFilledTonalStyle"
+                    style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
