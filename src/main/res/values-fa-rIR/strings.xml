@@ -1090,4 +1090,6 @@
     <string name="operatt_typing">در حال تایپ…</string>
     <string name="operatt_presence_unknown">آفلاین یا آخرین بازدید نامشخص</string>
     <string name="operatt_story_close">بستن</string><string name="operatt_story_send">ارسال</string>
+    <string name="operatt_delete_local">حذف فقط برای من</string>
+    <string name="operatt_delete_local_notice">این پیام فقط از این دستگاه حذف شود؟ ممکن است کپی‌های دیگر باقی بمانند.</string>
 </resources>
