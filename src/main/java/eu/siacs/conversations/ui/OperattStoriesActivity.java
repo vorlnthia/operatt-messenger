@@ -390,7 +390,7 @@ public final class OperattStoriesActivity extends XmppActivity {
         AlertDialog dialog=new AlertDialog.Builder(this)
                 .setTitle(story.isOwn()?R.string.operatt_story_mine:R.string.operatt_story_title)
                 .setView(container)
-                .setNegativeButton(R.string.close,null)
+                .setNegativeButton(R.string.operatt_story_close,null)
                 .setPositiveButton(story.isOwn()?R.string.operatt_story_manage
                         :R.string.operatt_story_reply,(d,which)->{
                     if(story.isOwn())manage(story);else reply(story);
@@ -443,7 +443,7 @@ public final class OperattStoriesActivity extends XmppActivity {
         editor.setHint(R.string.operatt_story_reply_hint);
         new AlertDialog.Builder(this).setTitle(R.string.operatt_story_reply)
             .setView(editor).setNegativeButton(android.R.string.cancel,null)
-            .setPositiveButton(R.string.send,(d,which)->{
+            .setPositiveButton(R.string.operatt_story_send,(d,which)->{
                 Account a=account();if(a==null||xmppConnectionService==null)return;
                 String response=editor.getText().toString().trim();
                 if(response.isEmpty())return;
