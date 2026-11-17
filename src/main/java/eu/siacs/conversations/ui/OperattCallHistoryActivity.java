@@ -121,7 +121,7 @@ public final class OperattCallHistoryActivity extends XmppActivity {
             .getString("operatt_selected_account",null);
         for (Conversation c:xmppConnectionService.getConversations())
             if(selected==null||selected.equals(c.getAccount().getJid().asBareJid().toString()))
-                names.put(c.getUuid(),c.getName());
+                names.put(c.getUuid(),c.getName().toString());
         executor.execute(()->{
             final List<Entry> result=new ArrayList<>();
             final SQLiteDatabase db=DatabaseBackend.getInstance(this).getReadableDatabase();
