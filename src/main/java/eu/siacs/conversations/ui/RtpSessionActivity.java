@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
@@ -139,6 +140,7 @@ public class RtpSessionActivity extends XmppActivity
     private WeakReference<JingleRtpConnection> rtpConnectionReference;
 
     private ActivityRtpSessionBinding binding;
+    private boolean localVideoFullscreen = false;
     private PowerManager.WakeLock mProximityWakeLock;
 
     private final Handler mHandler = new Handler();
@@ -190,6 +192,10 @@ public class RtpSessionActivity extends XmppActivity
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_rtp_session);
         this.binding.remoteVideo.setOnClickListener(this::onVideoScreenClick);
         this.binding.localVideo.setOnClickListener(this::onVideoScreenClick);
+        this.binding.inCallActionRight.setOnLongClickListener(view -> {
+            showAudioOutputPicker();
+            return true;
+        });
         setSupportActionBar(binding.toolbar);
         Activities.setStatusAndNavigationBarColors(this, binding.getRoot());
 
@@ -210,6 +216,7 @@ public class RtpSessionActivity extends XmppActivity
         findViewById(R.id.dialpad_pound_holder).setOnClickListener(view -> dialpadPressed(view));
 
         if (savedInstanceState != null) {
+            localVideoFullscreen = savedInstanceState.getBoolean("local_video_fullscreen", false);
             int dialpad_visibility = savedInstanceState.getInt("dialpad_visibility");
             findViewById(R.id.dialpad).setVisibility(dialpad_visibility);
         }
@@ -223,7 +230,60 @@ public class RtpSessionActivity extends XmppActivity
     }
 
     private void onVideoScreenClick(final View view) {
+        if (view == binding.localVideo) {
+            localVideoFullscreen = !localVideoFullscreen;
+            try {
+                updateVideoViews(requireRtpConnection().getEndUserState());
+            } catch (final IllegalStateException ignored) {
+                // The call may have ended while the preview was tapped.
+            }
+        }
         resetVisibilityExecutorShowButtons();
+    }
+
+    private void showAudioOutputPicker() {
+        final CallIntegration call;
+        try {
+            call = requireCallIntegration();
+        } catch (final IllegalStateException ignored) {
+            return;
+        }
+        final List<CallIntegration.AudioDevice> choices =
+                new java.util.ArrayList<>(call.getAudioDevices());
+        choices.remove(CallIntegration.AudioDevice.NONE);
+        if (choices.isEmpty()) {
+            return;
+        }
+        final CharSequence[] labels = new CharSequence[choices.size()];
+        int selectedIndex = -1;
+        for (int i = 0; i < choices.size(); i++) {
+            final CallIntegration.AudioDevice device = choices.get(i);
+            labels[i] = switch (device) {
+                case EARPIECE -> "Phone earpiece";
+                case SPEAKER_PHONE -> "Speaker";
+                case BLUETOOTH -> "Bluetooth headset";
+                case WIRED_HEADSET -> "Wired headset";
+                default -> device.toString();
+            };
+            if (device == call.getSelectedAudioDevice()) {
+                selectedIndex = i;
+            }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Audio output")
+                .setSingleChoiceItems(labels, selectedIndex, (dialog, which) -> {
+                    final CallIntegration.AudioDevice choice = choices.get(which);
+                    try {
+                        call.setAudioDevice(choice);
+                        putProximityWakeLockInProperState(choice);
+                    } catch (final IllegalStateException e) {
+                        Toast.makeText(this, R.string.could_not_modify_call, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     @Override
@@ -1153,7 +1213,7 @@ public class RtpSessionActivity extends XmppActivity
                 if (numberOfChoices >= 2) {
                     this.binding.inCallActionRight.setContentDescription(
                             getString(R.string.call_is_using_earpiece_tap_to_switch_to_speaker));
-                    this.binding.inCallActionRight.setOnClickListener(this::switchToSpeaker);
+                    this.binding.inCallActionRight.setOnClickListener(view -> showAudioOutputPicker());
                 } else {
                     this.binding.inCallActionRight.setContentDescription(
                             getString(R.string.call_is_using_earpiece));
@@ -1165,15 +1225,14 @@ public class RtpSessionActivity extends XmppActivity
                 this.binding.inCallActionRight.setContentDescription(
                         getString(R.string.call_is_using_wired_headset));
                 this.binding.inCallActionRight.setImageResource(R.drawable.ic_headset_mic_24dp);
-                this.binding.inCallActionRight.setOnClickListener(null);
-                this.binding.inCallActionRight.setClickable(false);
+                this.binding.inCallActionRight.setOnClickListener(view -> showAudioOutputPicker());
             }
             case SPEAKER_PHONE -> {
                 this.binding.inCallActionRight.setImageResource(R.drawable.ic_volume_up_24dp);
                 if (numberOfChoices >= 2) {
                     this.binding.inCallActionRight.setContentDescription(
                             getString(R.string.call_is_using_speaker_tap_to_switch_to_earpiece));
-                    this.binding.inCallActionRight.setOnClickListener(this::switchToEarpiece);
+                    this.binding.inCallActionRight.setOnClickListener(view -> showAudioOutputPicker());
                 } else {
                     this.binding.inCallActionRight.setContentDescription(
                             getString(R.string.call_is_using_speaker));
@@ -1185,8 +1244,7 @@ public class RtpSessionActivity extends XmppActivity
                 this.binding.inCallActionRight.setContentDescription(
                         getString(R.string.call_is_using_bluetooth));
                 this.binding.inCallActionRight.setImageResource(R.drawable.ic_bluetooth_audio_24dp);
-                this.binding.inCallActionRight.setOnClickListener(null);
-                this.binding.inCallActionRight.setClickable(false);
+                this.binding.inCallActionRight.setOnClickListener(view -> showAudioOutputPicker());
             }
         }
         setVisibleAndShow(this.binding.inCallActionRight);
@@ -1382,19 +1440,37 @@ public class RtpSessionActivity extends XmppActivity
             return;
         }
         final Optional<VideoTrack> localVideoTrack = getLocalVideoTrack();
+        final Optional<VideoTrack> remoteVideoTrack = getRemoteVideoTrack();
+        // Clear both output sinks before exchanging the tracks between renderers.
+        if (localVideoTrack.isPresent()) {
+            localVideoTrack.get().removeSink(binding.localVideo);
+            localVideoTrack.get().removeSink(binding.remoteVideo);
+        }
+        if (remoteVideoTrack.isPresent()) {
+            remoteVideoTrack.get().removeSink(binding.remoteVideo);
+            remoteVideoTrack.get().removeSink(binding.localVideo);
+        }
         if (localVideoTrack.isPresent() && !isPictureInPicture()) {
             ensureSurfaceViewRendererIsSetup(binding.localVideo);
             // paint local view over remote view
             binding.localVideo.setZOrderMediaOverlay(true);
-            binding.localVideo.setMirror(requireRtpConnection().isFrontCamera());
-            addSink(localVideoTrack.get(), binding.localVideo);
+            binding.localVideo.setMirror(!localVideoFullscreen && requireRtpConnection().isFrontCamera());
+            if (localVideoFullscreen && remoteVideoTrack.isPresent()) {
+                addSink(remoteVideoTrack.get(), binding.localVideo);
+            } else {
+                addSink(localVideoTrack.get(), binding.localVideo);
+            }
         } else {
             binding.localVideo.setVisibility(View.GONE);
         }
-        final Optional<VideoTrack> remoteVideoTrack = getRemoteVideoTrack();
         if (remoteVideoTrack.isPresent()) {
             ensureSurfaceViewRendererIsSetup(binding.remoteVideo);
-            addSink(remoteVideoTrack.get(), binding.remoteVideo);
+            binding.remoteVideo.setMirror(localVideoFullscreen && requireRtpConnection().isFrontCamera());
+            if (localVideoFullscreen && localVideoTrack.isPresent()) {
+                addSink(localVideoTrack.get(), binding.remoteVideo);
+            } else {
+                addSink(remoteVideoTrack.get(), binding.remoteVideo);
+            }
             binding.remoteVideo.setScalingType(
                     RendererCommon.ScalingType.SCALE_ASPECT_FILL,
                     RendererCommon.ScalingType.SCALE_ASPECT_FIT);
@@ -1653,6 +1729,7 @@ public class RtpSessionActivity extends XmppActivity
         super.onSaveInstanceState(outState);
         int visibility = findViewById(R.id.dialpad).getVisibility();
         outState.putInt("dialpad_visibility", visibility);
+        outState.putBoolean("local_video_fullscreen", localVideoFullscreen);
     }
 
     private void updateRtpSessionProposalState(
