@@ -52,7 +52,7 @@ public class AccountAdapter extends ArrayAdapter<Account> {
         if (account == null) {
             return view;
         }
-        viewHolder.binding.accountJid.setText(account.getJid().asBareJid().toString());
+        viewHolder.binding.accountJid.setText(eu.siacs.conversations.ui.util.OperattHandle.display(account.getJid().asBareJid().toString()));
         AvatarWorkerTask.loadAvatar(account, viewHolder.binding.accountImage, R.dimen.avatar);
         final var status = account.getStatus();
         if (account.isServiceOutage()) {
