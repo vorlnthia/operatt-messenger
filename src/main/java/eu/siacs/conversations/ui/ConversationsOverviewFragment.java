@@ -354,6 +354,10 @@ public class ConversationsOverviewFragment extends XmppFragment {
                 (view) -> startActivity(new Intent(getActivity(), ManageAccountActivity.class)));
         this.binding.operattAccountFilterButton.setOnClickListener(view -> showAccountFilterDialog());
         this.binding.operattBottomNav.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.operatt_nav_stories) {
+                startActivity(new Intent(requireContext(), OperattStoriesActivity.class));
+                return false; // Preserve the selected v5 home tab underneath Stories.
+            }
             showTab(item.getItemId());
             return true;
         });
