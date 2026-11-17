@@ -51,6 +51,11 @@
         android:title="Allow family location requests"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_allow_mutual_delete"
+        android:orderInCategory="69"
+        android:title="Allow this contact to delete my sent messages"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_family_request_location"
         android:orderInCategory="71"
         android:title="Check family location"
