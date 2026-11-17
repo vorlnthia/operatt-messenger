@@ -1290,4 +1290,5 @@
     <string name="operatt_story_delete_confirm">Remove this story from selected contacts’ feeds? Uploaded media may remain on the media host.</string>
     <string name="operatt_typing">Typing…</string>
     <string name="operatt_presence_unknown">Offline or last seen unavailable</string>
+    <string name="operatt_story_close">Close</string><string name="operatt_story_send">Send</string>
 </resources>
