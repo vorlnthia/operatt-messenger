@@ -370,7 +370,10 @@ public class RtpSessionActivity extends XmppActivity
 
     public boolean onOptionsItemSelected(final MenuItem item) {
         final var itemItem = item.getItemId();
-        if (itemItem == R.id.action_help) {
+        if (itemItem == R.id.action_audio_output) {
+            showAudioOutputPicker();
+            return true;
+        } else if (itemItem == R.id.action_help) {
             launchHelpInBrowser();
             return true;
         } else if (itemItem == R.id.action_goto_chat) {
