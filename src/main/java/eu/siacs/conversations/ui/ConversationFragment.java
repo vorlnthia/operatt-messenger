@@ -1424,8 +1424,9 @@ public class ConversationFragment extends XmppFragment
                                 : R.string.moderate_delete_dot_dot_dot);
                 retractMessage.setVisible(
                         c.getMode() == Conversation.MODE_SINGLE
-                                && m.getStatus() != Message.STATUS_RECEIVED
                                 && m.getStatus() != Message.STATUS_SEND_FAILED
+                                && (m.getStatus() != Message.STATUS_RECEIVED
+                                        || !Strings.isNullOrEmpty(m.getRemoteMsgId()))
                                 && !deleted);
                 correctMessage.setVisible(
                         !showError
@@ -1602,7 +1603,7 @@ public class ConversationFragment extends XmppFragment
                             final var account = selectedMessage.getConversation().getAccount();
                             final var connection = account.getXmppConnection();
                             if (connection == null || !connection.getManager(ModerationManager.class)
-                                    .retractOwnMessage(selectedMessage)) {
+                                    .retractMessageForEveryone(selectedMessage)) {
                                 Toast.makeText(requireContext(), R.string.operatt_retract_failed, Toast.LENGTH_LONG).show();
                             } else {
                                 refresh();
