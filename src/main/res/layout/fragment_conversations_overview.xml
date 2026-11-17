@@ -25,7 +25,7 @@
     android:layout_marginHorizontal="14dp" android:layout_marginBottom="6dp" android:orientation="horizontal"
     android:gravity="center_vertical" android:background="@drawable/operatt_home_pill">
     <com.google.android.material.button.MaterialButton android:id="@+id/operatt_all_chats_button"
-     style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="42dp"
+     style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="42dp"
      android:layout_weight="1" android:layout_marginStart="5dp" android:text="@string/operatt_tab_chats"
      android:textColor="?colorPrimary" app:cornerRadius="24dp"/>
     <com.google.android.material.button.MaterialButton android:id="@+id/operatt_account_filter_button"
@@ -201,15 +201,15 @@
      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
       android:layout_marginTop="26dp" android:orientation="horizontal" android:gravity="center">
        <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_photo_button"
-        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="68dp"
         android:layout_weight="1" android:layout_marginHorizontal="3dp"
         android:text="@string/operatt_profile_photo" app:icon="@drawable/ic_camera_alt_24dp" app:iconGravity="textTop"/>
        <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_edit_button"
-        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="68dp"
         android:layout_weight="1" android:layout_marginHorizontal="3dp"
         android:text="@string/operatt_profile_edit" app:icon="@drawable/ic_edit_24dp" app:iconGravity="textTop"/>
        <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_manage_button"
-        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="68dp"
         android:layout_weight="1" android:layout_marginHorizontal="3dp"
         android:text="@string/operatt_settings_accounts_title" app:icon="@drawable/ic_settings_24dp" app:iconGravity="textTop"/>
      </LinearLayout>
@@ -227,6 +227,6 @@
  <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/operatt_bottom_nav"
   android:layout_width="match_parent" android:layout_height="wrap_content"
   android:minHeight="70dp" android:background="?colorSurface" app:menu="@menu/operatt_bottom_navigation"
-  app:labelVisibilityMode="labeled" app:itemIconSize="24dp" app:itemActiveIndicatorColor="?colorPrimaryContainer"
+  app:labelVisibilityMode="labeled" app:itemIconSize="24dp"
   app:itemTextColor="@color/operatt_nav_icon_tint" app:itemIconTint="@color/operatt_nav_icon_tint"/>
 </LinearLayout></layout>
