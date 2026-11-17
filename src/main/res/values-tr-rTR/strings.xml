@@ -1219,4 +1219,6 @@
     <string name="operatt_typing">Yazıyor…</string>
     <string name="operatt_presence_unknown">Çevrimdışı veya son görülme bilinmiyor</string>
     <string name="operatt_story_close">Kapat</string><string name="operatt_story_send">Gönder</string>
+    <string name="operatt_delete_local">Benim için sil</string>
+    <string name="operatt_delete_local_notice">Bu mesaj yalnızca bu cihazdan silinsin mi? Diğer cihazlardaki kopyalar kalabilir.</string>
 </resources>
