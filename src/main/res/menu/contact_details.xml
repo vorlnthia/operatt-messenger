@@ -46,6 +46,22 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_family_share_location"
+        android:orderInCategory="70"
+        android:title="Allow family location requests"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_allow_mutual_delete"
+        android:orderInCategory="69"
+        android:title="Allow this contact to delete my sent messages"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_family_request_location"
+        android:orderInCategory="71"
+        android:title="Check family location"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_custom_notifications"
         android:orderInCategory="75"
         android:title="@string/custom_notifications"
