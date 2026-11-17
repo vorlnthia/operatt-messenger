@@ -333,6 +333,20 @@ public class MessageParser extends AbstractParser
             selfAddressed = false;
         }
 
+        // Operatt family requests are processed only as live, direct peer stanzas.
+        // Archived, carbon-copied and group messages cannot trigger a location reply.
+        if (query == null && !isCarbon && !selfAddressed && !isTypeGroupChat
+                && status == eu.siacs.conversations.entities.Message.STATUS_RECEIVED) {
+            final Element locationRequest = packet.findChild(
+                    "location-request",
+                    eu.siacs.conversations.services.FamilyLocationManager.NAMESPACE);
+            if (locationRequest != null) {
+                eu.siacs.conversations.services.FamilyLocationManager.handleRequest(
+                        mXmppConnectionService, account, counterpart, locationRequest);
+                return;
+            }
+        }
+
         if (packet.hasExtension(MucUser.class)
                 && packet.getExtension(MucUser.class)
                         .hasExtension(im.conversations.android.xmpp.model.muc.user.Invite.class)) {
