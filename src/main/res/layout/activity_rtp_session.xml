@@ -52,7 +52,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:textAppearance="?textAppearanceDisplayLarge"
+                android:textAppearance="?textAppearanceHeadlineLarge"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="-0.013"
+                android:textColor="?colorOnSurface"
                 tools:text="Juliet Capulet" />
 
             <TextView
@@ -63,6 +66,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="16dp"
                 android:textAppearance="?textAppearanceBodyMedium"
+                android:textColor="?colorOnSurfaceVariant"
                 android:visibility="visible"
                 tools:text="jcapulet@example.com" />
 
