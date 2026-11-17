@@ -683,6 +683,18 @@ public class ConversationFragment extends XmppFragment
                         case R.id.action_request_contact_location:
                             requestContactLocation();
                             break;
+                        case R.id.operatt_check_family_location:
+                            if (conversation != null && conversation.getMode() == Conversation.MODE_SINGLE
+                                    && conversation.getAccount().isOnlineAndConnected()) {
+                                eu.siacs.conversations.services.FamilyLocationManager.request(
+                                        conversation.getAccount(), conversation.getAddress());
+                                Toast.makeText(requireContext(), R.string.operatt_family_location_requested,
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(requireContext(), R.string.operatt_family_location_unavailable,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            break;
                         case R.id.action_my_coordinates:
                             attachFile(ATTACHMENT_CHOICE_LOCATION);
                             break;
@@ -1456,8 +1468,9 @@ public class ConversationFragment extends XmppFragment
                                 : R.string.moderate_delete_dot_dot_dot);
                 retractMessage.setVisible(
                         c.getMode() == Conversation.MODE_SINGLE
-                                && m.getStatus() != Message.STATUS_RECEIVED
                                 && m.getStatus() != Message.STATUS_SEND_FAILED
+                                && (m.getStatus() != Message.STATUS_RECEIVED
+                                        || !Strings.isNullOrEmpty(m.getRemoteMsgId()))
                                 && !deleted);
                 correctMessage.setVisible(
                         !showError
@@ -1634,7 +1647,7 @@ public class ConversationFragment extends XmppFragment
                             final var account = selectedMessage.getConversation().getAccount();
                             final var connection = account.getXmppConnection();
                             if (connection == null || !connection.getManager(ModerationManager.class)
-                                    .retractOwnMessage(selectedMessage)) {
+                                    .retractMessageForEveryone(selectedMessage)) {
                                 Toast.makeText(requireContext(), R.string.operatt_retract_failed, Toast.LENGTH_LONG).show();
                             } else {
                                 refresh();
