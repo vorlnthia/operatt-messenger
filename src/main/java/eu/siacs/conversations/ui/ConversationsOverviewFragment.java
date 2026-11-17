@@ -68,6 +68,7 @@ import eu.siacs.conversations.entities.Conversation;
 import eu.siacs.conversations.entities.Conversational;
 import eu.siacs.conversations.services.QuickConversationsService;
 import eu.siacs.conversations.ui.adapter.ConversationAdapter;
+import eu.siacs.conversations.ui.activity.SettingsActivity;
 import eu.siacs.conversations.ui.interfaces.OnConversationArchived;
 import eu.siacs.conversations.ui.interfaces.OnConversationSelected;
 import eu.siacs.conversations.ui.util.PendingActionHelper;
@@ -333,6 +334,7 @@ public class ConversationsOverviewFragment extends XmppFragment {
                         inflater, R.layout.fragment_conversations_overview, container, false);
         this.binding.fab.setOnClickListener(
                 (view) -> StartConversationActivity.launch(getActivity()));
+        this.binding.operattMenuButton.setOnClickListener(view -> showOperattMenu());
         this.binding.operattSearchButton.setOnClickListener(
                 (view) -> startActivity(new Intent(getActivity(), SearchActivity.class)));
         this.binding.operattAccountsButton.setOnClickListener(
@@ -428,6 +430,29 @@ public class ConversationsOverviewFragment extends XmppFragment {
 
     private void openEasyInviteScreen(final Account account) {
         EasyOnboardingInviteActivity.launch(account, requireContext());
+    }
+
+    private void showOperattMenu() {
+        final String[] actions = getResources().getStringArray(R.array.operatt_quick_menu);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.operatt_main_menu)
+                .setItems(actions, (dialog, selected) -> {
+                    switch (selected) {
+                        case 0 -> StartConversationActivity.launch(getActivity());
+                        case 1 -> {
+                            final String jid = getSelectedAccountId();
+                            if (jid != null) {
+                                final Intent intent = new Intent(requireContext(), EditAccountActivity.class);
+                                intent.putExtra("jid", jid);
+                                startActivity(intent);
+                            }
+                        }
+                        case 2 -> startActivity(new Intent(requireContext(), ManageAccountActivity.class));
+                        case 3 -> startActivity(new Intent(requireContext(), StickerStudioActivity.class));
+                        case 4, 5 -> startActivity(new Intent(requireContext(), SettingsActivity.class));
+                        default -> { }
+                    }
+                }).show();
     }
 
     private String getSelectedAccountId() {

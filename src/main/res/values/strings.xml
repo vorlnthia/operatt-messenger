@@ -1171,4 +1171,17 @@
     <string name="operatt_sticker_choose_first">Choose a photo first.</string>
     <string name="operatt_sticker_failed">Unable to create sticker from this image.</string>
     <string name="operatt_sticker_saved_ok">Sticker saved on this device.</string>
+    <string name="operatt_main_menu">Operatt menu</string>
+    <string name="operatt_my_profile">My profile</string>
+    <string name="operatt_chat_new">New message</string>
+    <string name="operatt_stickers">Sticker studio</string>
+    <string name="operatt_backup_settings">Backup settings</string>
+    <string-array name="operatt_quick_menu">
+        <item>@string/operatt_chat_new</item>
+        <item>@string/operatt_my_profile</item>
+        <item>@string/operatt_manage_accounts</item>
+        <item>@string/operatt_stickers</item>
+        <item>@string/operatt_backup_settings</item>
+        <item>@string/action_settings</item>
+    </string-array>
 </resources>

@@ -22,6 +22,16 @@
                 android:paddingBottom="8dp">
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operatt_menu_button"
+                    style="?attr/materialIconButtonOutlinedStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="@string/operatt_main_menu"
+                    app:icon="@drawable/ic_operatt_menu_24dp"
+                    app:iconTint="?colorPrimary" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/operatt_search_button"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="0dp"
