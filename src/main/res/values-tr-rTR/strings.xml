@@ -1218,4 +1218,5 @@
     <string name="operatt_story_delete_confirm">Hikâye kaldırılsın mı? Yüklenen medya sunucuda kalabilir.</string>
     <string name="operatt_typing">Yazıyor…</string>
     <string name="operatt_presence_unknown">Çevrimdışı veya son görülme bilinmiyor</string>
+    <string name="operatt_story_close">Kapat</string><string name="operatt_story_send">Gönder</string>
 </resources>
