@@ -19,14 +19,14 @@
                 android:layout_height="wrap_content"
                 android:background="?android:selectableItemBackground"
                 android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="12dp"
-                android:minHeight="76dp">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="13dp"
+                android:minHeight="80dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/conversation_image"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
                     android:layout_alignParentStart="true"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/OperattCircleAvatar" />
@@ -43,7 +43,7 @@
                         style="?textAppearanceTitleMedium"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="?colorOnSurface"
-                        android:textSize="16sp"
+                        android:textSize="16sp" android:letterSpacing="-0.009"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/conversation_lastwrapper"
@@ -97,6 +97,7 @@
                                 style="?textAppearanceBodyMedium"
                                 android:fontFamily="sans-serif"
                                 android:textSize="14sp"
+                                android:letterSpacing="0.002"
                                 android:textColor="?colorOnSurfaceVariant"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
