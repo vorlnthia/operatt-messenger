@@ -586,13 +586,13 @@ public class ConversationFragment extends XmppFragment
                     final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
                     final MenuItem menuMute = menu.findItem(R.id.action_mute);
                     final MenuItem menuUnmute = menu.findItem(R.id.action_unmute);
-                    final MenuItem requestLocation = menu.findItem(R.id.action_request_contact_location);
-                    requestLocation.setVisible(c != null && c.getMode() == Conversation.MODE_SINGLE && !c.withSelf());
                     final MenuItem menuCall = menu.findItem(R.id.action_call);
                     final MenuItem menuOngoingCall = menu.findItem(R.id.action_ongoing_call);
                     final MenuItem menuVideoCall = menu.findItem(R.id.action_video_call);
                     final MenuItem menuTogglePinned = menu.findItem(R.id.action_toggle_pinned);
                     final var c = ConversationFragment.this.conversation;
+                    final MenuItem requestLocation = menu.findItem(R.id.action_request_contact_location);
+                    requestLocation.setVisible(c != null && c.getMode() == Conversation.MODE_SINGLE && !c.withSelf());
                     if (c == null) {
                         return;
                     }
