@@ -172,6 +172,10 @@
         </receiver>
 
         <activity
+            android:name=".ui.CallHistoryActivity"
+            android:exported="false"
+            android:label="Calls" />
+        <activity
             android:name=".ui.StickerStudioActivity"
             android:exported="false" />
         <activity
