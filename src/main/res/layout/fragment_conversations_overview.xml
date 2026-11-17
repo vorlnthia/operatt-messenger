@@ -2,15 +2,84 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:background="?colorSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operatt_menu_button"
+                    style="?attr/materialIconButtonOutlinedStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="@string/operatt_main_menu"
+                    app:icon="@drawable/ic_operatt_menu_24dp"
+                    app:iconTint="?colorPrimary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operatt_search_button"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/operatt_search_chats"
+                    android:backgroundTint="?colorSurfaceContainer"
+                    android:textColor="?colorOnSurfaceVariant"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_search_24dp"
+                    app:iconTint="?colorOnSurfaceVariant" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operatt_accounts_button"
+                    style="?attr/materialIconButtonFilledTonalStyle"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="@string/operatt_switch_accounts"
+                    app:iconTint="?colorPrimary"
+                    app:icon="@drawable/ic_person_add_24dp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/operatt_account_filter_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="start|center_vertical"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/operatt_select_account"
+                android:textColor="?colorPrimary"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_person_add_24dp"
+                app:iconTint="?colorPrimary" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scrollbars="vertical" />
+        </LinearLayout>
 
         <RelativeLayout
             android:visibility="gone"
@@ -26,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/ic_forum_thin_48dp"
-                app:tint="?colorPrimaryFixedDim" />
+                app:tint="?colorPrimary" />
 
             <TextView
                 android:id="@+id/empty_chat_hint_text"
@@ -45,6 +114,9 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="16dp"
             android:text="@string/start_chat"
+            android:backgroundTint="?colorPrimary"
+            android:textColor="?colorOnPrimary"
+            app:iconTint="?colorOnPrimary"
             app:icon="@drawable/ic_chat_24dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

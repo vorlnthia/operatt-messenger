@@ -3,6 +3,14 @@ package eu.siacs.conversations;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import eu.siacs.conversations.worker.ExportBackupWorker;
+import java.util.concurrent.TimeUnit;
 import android.util.Log;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
@@ -50,6 +58,29 @@ public class Conversations extends Application {
         EmojiInitializationService.execute(getApplicationContext());
         ExceptionHelper.init(getApplicationContext());
         SettingsUtils.applyThemeSettings(this);
+        scheduleWeeklyBackupIfDefault();
+    }
+
+    /** Initialize a seven-day backup only for installs that have not chosen another cadence.
+     * WorkManager uses battery/storage constraints; Android chooses the execution time.
+     */
+    private void scheduleWeeklyBackupIfDefault() {
+        final var prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.contains("recurring_backup")) {
+            prefs.edit().putString("recurring_backup", "604800").apply();
+        }
+        if (!"604800".equals(prefs.getString("recurring_backup", ""))) return;
+        final Constraints constraints = new Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .build();
+        final PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
+                        ExportBackupWorker.class, 7, TimeUnit.DAYS)
+                .setConstraints(constraints)
+                .setInputData(new Data.Builder().putBoolean("recurring_backup", true).build())
+                .build();
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "recurring_backup", ExistingPeriodicWorkPolicy.KEEP, request);
     }
 
     private static void installSecurityProvider() {

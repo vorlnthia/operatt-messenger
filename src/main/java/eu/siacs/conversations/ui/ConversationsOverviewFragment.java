@@ -33,6 +33,8 @@ import static androidx.recyclerview.widget.ItemTouchHelper.LEFT;
 import static androidx.recyclerview.widget.ItemTouchHelper.RIGHT;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
@@ -66,6 +68,7 @@ import eu.siacs.conversations.entities.Conversation;
 import eu.siacs.conversations.entities.Conversational;
 import eu.siacs.conversations.services.QuickConversationsService;
 import eu.siacs.conversations.ui.adapter.ConversationAdapter;
+import eu.siacs.conversations.ui.activity.SettingsActivity;
 import eu.siacs.conversations.ui.interfaces.OnConversationArchived;
 import eu.siacs.conversations.ui.interfaces.OnConversationSelected;
 import eu.siacs.conversations.ui.util.PendingActionHelper;
@@ -78,6 +81,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConversationsOverviewFragment extends XmppFragment {
+
+    private static final String OPERATT_SELECTED_ACCOUNT = "operatt_selected_account";
 
     private static final String STATE_SCROLL_POSITION =
             ConversationsOverviewFragment.class.getName() + ".scroll_state";
@@ -173,7 +178,13 @@ public class ConversationsOverviewFragment extends XmppFragment {
                 @Override
                 public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                     final var id = menuItem.getItemId();
-                    if (id == R.id.action_search) {
+                    if (id == R.id.operatt_switch_accounts) {
+                        startActivity(new Intent(getActivity(), ManageAccountActivity.class));
+                        return true;
+                    } else if (id == R.id.operatt_sticker_studio) {
+                        startActivity(new Intent(getActivity(), StickerStudioActivity.class));
+                        return true;
+                    } else if (id == R.id.action_search) {
                         startActivity(new Intent(getActivity(), SearchActivity.class));
                         return true;
                     } else if (id == R.id.action_easy_invite) {
@@ -323,6 +334,12 @@ public class ConversationsOverviewFragment extends XmppFragment {
                         inflater, R.layout.fragment_conversations_overview, container, false);
         this.binding.fab.setOnClickListener(
                 (view) -> StartConversationActivity.launch(getActivity()));
+        this.binding.operattMenuButton.setOnClickListener(view -> showOperattMenu());
+        this.binding.operattSearchButton.setOnClickListener(
+                (view) -> startActivity(new Intent(getActivity(), SearchActivity.class)));
+        this.binding.operattAccountsButton.setOnClickListener(
+                (view) -> startActivity(new Intent(getActivity(), ManageAccountActivity.class)));
+        this.binding.operattAccountFilterButton.setOnClickListener(view -> showAccountFilterDialog());
 
         this.conversationsAdapter =
                 new ConversationAdapter(requireXmppActivity(), this.conversations);
@@ -415,6 +432,76 @@ public class ConversationsOverviewFragment extends XmppFragment {
         EasyOnboardingInviteActivity.launch(account, requireContext());
     }
 
+    private void showOperattMenu() {
+        final String[] actions = getResources().getStringArray(R.array.operatt_quick_menu);
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.operatt_main_menu)
+                .setItems(actions, (dialog, selected) -> {
+                    switch (selected) {
+                        case 0 -> StartConversationActivity.launch(getActivity());
+                        case 1 -> {
+                            final String jid = getSelectedAccountId();
+                            if (jid != null) {
+                                final Intent intent = new Intent(requireContext(), EditAccountActivity.class);
+                                intent.putExtra("jid", jid);
+                                startActivity(intent);
+                            }
+                        }
+                        case 2 -> startActivity(new Intent(requireContext(), ManageAccountActivity.class));
+                        case 3 -> startActivity(new Intent(requireContext(), StickerStudioActivity.class));
+                        case 4, 5 -> startActivity(new Intent(requireContext(), SettingsActivity.class));
+                        default -> { }
+                    }
+                }).show();
+    }
+
+    private String getSelectedAccountId() {
+        final var service = requireXmppActivity().xmppConnectionService;
+        if (service == null || service.getAccounts().isEmpty()) {
+            return null;
+        }
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        final String saved = prefs.getString(OPERATT_SELECTED_ACCOUNT, null);
+        for (Account account : service.getAccounts()) {
+            if (account.getJid().asBareJid().toString().equals(saved)) {
+                return saved;
+            }
+        }
+        return service.getAccounts().get(0).getJid().asBareJid().toString();
+    }
+
+    private void showAccountFilterDialog() {
+        final var service = requireXmppActivity().xmppConnectionService;
+        if (service == null || service.getAccounts().isEmpty()) {
+            startActivity(new Intent(requireContext(), ManageAccountActivity.class));
+            return;
+        }
+        final var accounts = service.getAccounts();
+        final String[] labels = new String[accounts.size() + 1];
+        int checked = -1;
+        final String selected = getSelectedAccountId();
+        for (int i = 0; i < accounts.size(); i++) {
+            labels[i] = accounts.get(i).getJid().asBareJid().toString();
+            if (labels[i].equals(selected)) checked = i;
+        }
+        labels[accounts.size()] = getString(R.string.operatt_manage_accounts);
+        final var dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.operatt_select_account)
+                .setSingleChoiceItems(labels, checked, (whichDialog, which) -> {
+                    whichDialog.dismiss();
+                    if (which == accounts.size()) {
+                        startActivity(new Intent(requireContext(), ManageAccountActivity.class));
+                    } else {
+                        PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                                .putString(OPERATT_SELECTED_ACCOUNT, labels[which]).apply();
+                        refresh();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+        dialog.show();
+    }
+
     @Override
     void refresh() {
         if (this.binding == null) {
@@ -427,6 +514,12 @@ public class ConversationsOverviewFragment extends XmppFragment {
         this.requireXmppActivity()
                 .xmppConnectionService
                 .populateWithOrderedConversations(this.conversations);
+        final String selectedAccount = getSelectedAccountId();
+        if (selectedAccount != null) {
+            this.conversations.removeIf(c -> !c.getAccount().getJid().asBareJid().toString().equals(selectedAccount));
+        }
+        this.binding.operattAccountFilterButton.setText(
+                selectedAccount == null ? getString(R.string.operatt_select_account) : selectedAccount);
         Conversation removed = this.swipedConversation.peek();
         if (removed != null) {
             if (removed.isRead()) {

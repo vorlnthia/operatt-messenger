@@ -6,16 +6,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Toast;
 import androidx.databinding.DataBindingUtil;
 import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.databinding.ActivityMagicCreateBinding;
 import eu.siacs.conversations.entities.Account;
-import eu.siacs.conversations.utils.CryptoHelper;
 import eu.siacs.conversations.utils.InstallReferrerUtils;
 import eu.siacs.conversations.xmpp.Jid;
-import java.security.SecureRandom;
 
 public class MagicCreateActivity extends XmppActivity implements TextWatcher {
 
@@ -60,7 +57,9 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
         binding.createAccount.setOnClickListener(
                 v -> {
                     try {
-                        final String username = binding.username.getText().toString();
+                        final String username = binding.username.getText().toString().trim();
+                        final String password = binding.password.getText().toString();
+                        final String confirmPassword = binding.confirmPassword.getText().toString();
                         final Jid jid;
                         final boolean fixedUsername;
                         if (this.domain != null && this.username != null) {
@@ -73,18 +72,27 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             fixedUsername = false;
                             jid = Jid.ofLocalAndDomain(username, Config.MAGIC_CREATE_DOMAIN);
                         }
-                        if (!jid.getLocal().equals(jid.getLocal())
-                                || (this.username == null && username.length() < 3)) {
+                        if (this.username == null && !username.matches("[A-Za-z0-9._-]{3,32}")) {
                             binding.usernameLayout.setError(getString(R.string.invalid_username));
                             binding.username.requestFocus();
+                        } else if (password.length() < 10) {
+                            binding.usernameLayout.setError(null);
+                            binding.passwordLayout.setError(
+                                    getString(R.string.operatt_password_too_short));
+                            binding.password.requestFocus();
+                        } else if (!password.equals(confirmPassword)) {
+                            binding.passwordLayout.setError(null);
+                            binding.confirmPasswordLayout.setError(
+                                    getString(R.string.operatt_password_mismatch));
+                            binding.confirmPassword.requestFocus();
                         } else {
                             binding.usernameLayout.setError(null);
+                            binding.passwordLayout.setError(null);
+                            binding.confirmPasswordLayout.setError(null);
                             Account account = xmppConnectionService.findAccountByJid(jid);
                             if (account == null) {
                                 account =
-                                        new Account(
-                                                jid,
-                                                CryptoHelper.createPassword(new SecureRandom()));
+                                        new Account(jid, password);
                                 account.setOption(Account.OPTION_REGISTER, true);
                                 account.setOption(Account.OPTION_DISABLED, true);
                                 account.setOption(Account.OPTION_MAGIC_CREATE, true);
@@ -102,11 +110,6 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             intent.setFlags(
                                     Intent.FLAG_ACTIVITY_NEW_TASK
                                             | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            Toast.makeText(
-                                            MagicCreateActivity.this,
-                                            R.string.secure_password_generated,
-                                            Toast.LENGTH_SHORT)
-                                    .show();
                             StartConversationActivity.addInviteUri(intent, getIntent());
                             startActivity(intent);
                         }

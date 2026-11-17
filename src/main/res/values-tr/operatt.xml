@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="operatt_sign_out">Hesabı bu cihazdan kaldır</string>
+    <string name="operatt_sign_out_warning">Çıkış yaptığınızda bu hesap, yerel mesaj geçmişi ve şifreleme anahtarları cihazdan silinir. Önce yedek alın. Sunucudaki hesabınız açık kalır.</string>
+    <string name="operatt_login_help">Kullanıcı adınız veya tam hesap adresinizle giriş yapın.</string>
+    <string name="operatt_welcome_title">Operatt Messenger’a hoş geldiniz</string>
+    <string name="operatt_welcome_description">Operatt hesabı oluşturun veya mevcut hesabınızla giriş yapın.</string>
+    <string name="operatt_create_account">Operatt hesabı oluştur</string>
+    <string name="operatt_password">Parola</string>
+    <string name="operatt_confirm_password">Parolayı doğrula</string>
+    <string name="operatt_password_too_short">Parola en az 10 karakter olmalıdır.</string>
+    <string name="operatt_password_mismatch">Parolalar eşleşmiyor.</string>
+    <string name="operatt_switch_accounts">Hesap değiştir veya ekle</string>
+    <string name="operatt_search_chats">Sohbetlerde ara</string>
+</resources>

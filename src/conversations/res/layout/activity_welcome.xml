@@ -42,30 +42,34 @@
                     android:paddingBottom="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/snikket_intro"
-                        android:layout_marginBottom="16dp"
-                        android:textAppearance="?textAppearanceBodyMedium" />
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/operatt_welcome_title"
+                        android:textAppearance="?textAppearanceHeadlineMedium" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        android:text="@string/operatt_welcome_description"
+                        android:textAppearance="?textAppearanceBodyLarge" />
 
                     <Button
-                        android:id="@+id/learn_more"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/create_account"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="16dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:text="@string/learn_more" />
+                        android:minHeight="52dp"
+                        android:text="@string/operatt_create_account" />
 
                     <Button
                         android:id="@+id/use_existing"
                         style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
                         android:text="@string/i_already_have_an_account" />
-                        android:textColor="?colorAccent" />
 
                 </LinearLayout>
 

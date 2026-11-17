@@ -269,7 +269,7 @@ public class EditAccountActivity extends OmemoActivity
                                             getUserModeDomain(),
                                             null);
                         } else {
-                            jid = Jid.ofUserInput(binding.accountJid.getText().toString());
+                            jid = Jid.ofUserInput(normalizeAccountAddress(binding.accountJid.getText().toString()));
                             Resolver.checkDomain(jid);
                         }
                     } catch (final NullPointerException | IllegalArgumentException e) {
@@ -700,6 +700,14 @@ public class EditAccountActivity extends OmemoActivity
                         .equals(this.binding.port.getText().toString());
     }
 
+    private static String normalizeAccountAddress(final String input) {
+        final String address = input.trim();
+        if (!address.isEmpty() && !address.contains("@") && !address.contains("/")) {
+            return address + "@chat.operatt.com";
+        }
+        return address;
+    }
+
     protected boolean jidEdited() {
         final String unmodified;
         if (mUsernameMode) {
@@ -707,7 +715,8 @@ public class EditAccountActivity extends OmemoActivity
         } else {
             unmodified = this.mAccount.getJid().asBareJid().toString();
         }
-        return !unmodified.equals(this.binding.accountJid.getText().toString());
+        final String input = this.binding.accountJid.getText().toString();
+        return !unmodified.equals(mUsernameMode ? input : normalizeAccountAddress(input));
     }
 
     @Override
@@ -778,6 +787,8 @@ public class EditAccountActivity extends OmemoActivity
     public boolean onCreateOptionsMenu(final Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.editaccount, menu);
+        menu.findItem(R.id.operatt_sign_out).setVisible(mAccount != null && !mInitMode);
+        menu.findItem(R.id.operatt_switch_accounts).setVisible(!mInitMode);
         final MenuItem showBlocklist = menu.findItem(R.id.action_show_block_list);
         final MenuItem showMoreInfo = menu.findItem(R.id.action_server_info_show_more);
         final MenuItem changePassword = menu.findItem(R.id.action_change_password_on_server);
@@ -1009,6 +1020,12 @@ public class EditAccountActivity extends OmemoActivity
             return false;
         }
         switch (item.getItemId()) {
+            case R.id.operatt_sign_out:
+                showSignOutDialog();
+                return true;
+            case R.id.operatt_switch_accounts:
+                startActivity(new Intent(this, ManageAccountActivity.class));
+                return true;
             case android.R.id.home:
                 deleteAccountAndReturnIfNecessary();
                 break;
@@ -1046,6 +1063,23 @@ public class EditAccountActivity extends OmemoActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSignOutDialog() {
+        final Account account = mAccount;
+        if (account == null || xmppConnectionService == null) {
+            return;
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.operatt_sign_out)
+                .setMessage(R.string.operatt_sign_out_warning)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.operatt_sign_out, (dialog, which) -> {
+                    xmppConnectionService.deleteAccount(account);
+                    startActivity(SignupUtils.getRedirectionIntent(this));
+                    finish();
+                })
+                .show();
     }
 
     private void deleteAccount() {

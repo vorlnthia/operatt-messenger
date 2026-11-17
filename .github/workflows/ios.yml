@@ -1,0 +1,61 @@
+name: Operatt iOS Simulator
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulator-build:
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch pinned GPL iOS base
+        shell: bash
+        run: |
+          git clone --filter=blob:none https://github.com/snikket-im/snikket-ios.git "$RUNNER_TEMP/snikket-ios"
+          cd "$RUNNER_TEMP/snikket-ios"
+          git checkout --detach 6948e50bea18487e9f2329f678ec834c3826fd64
+
+      - name: Apply Operatt branding and account flow
+        run: python3 ios/prepare_upstream.py "$RUNNER_TEMP/snikket-ios"
+
+      - name: Fetch iOS native dependencies
+        working-directory: ${{ runner.temp }}/snikket-ios
+        run: bash scripts/snikket deps
+
+      - name: Build iOS Simulator app (no signing required)
+        working-directory: ${{ runner.temp }}/snikket-ios
+        shell: bash
+        run: |
+          set -eo pipefail
+          xcodebuild -project Snikket.xcodeproj -scheme Snikket \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/snikket-ios/build/DerivedData" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/snikket-ios/build/DerivedData/SourcePackages" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            build | tee "$RUNNER_TEMP/operatt-ios-build.log" | tail -n 90
+
+      - name: Zip Simulator build
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/snikket-ios/build/DerivedData/Build/Products/Debug-iphonesimulator/Snikket.app"
+          test -d "$APP"
+          ditto -c -k --keepParent "$APP" "$RUNNER_TEMP/operatt-ios-simulator.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operatt-ios-simulator
+          path: ${{ runner.temp }}/operatt-ios-simulator.zip
+          if-no-files-found: error
+          retention-days: 14

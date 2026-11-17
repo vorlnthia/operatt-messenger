@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="operatt_sign_out">حذف حساب از این دستگاه</string>
+    <string name="operatt_sign_out_warning">خروج، این حساب و تاریخچهٔ پیام‌ها و کلیدهای رمزنگاری آن را از برنامه حذف می‌کند. برای نگهداری آن‌ها ابتدا پشتیبان بگیر. حساب روی سرور فعال می‌ماند. برای ورود دوباره به آدرس کامل حساب و رمز نیاز داری.</string>
+    <string name="operatt_login_help">با نام کاربری یا آدرس کامل حسابت وارد شو.</string>
+    <string name="operatt_welcome_title">به اپرات مسنجر خوش آمدید</string>
+    <string name="operatt_welcome_description">یک حساب اپرات بسازید یا با حساب موجود وارد شوید.</string>
+    <string name="operatt_create_account">ساخت حساب اپرات</string>
+    <string name="operatt_password">رمز عبور</string>
+    <string name="operatt_confirm_password">تکرار رمز عبور</string>
+    <string name="operatt_password_too_short">رمز عبور باید حداقل ۱۰ نویسه داشته باشد.</string>
+    <string name="operatt_password_mismatch">رمزهای عبور یکسان نیستند.</string>
+    <string name="operatt_switch_accounts">تغییر یا افزودن حساب</string>
+    <string name="operatt_search_chats">جست‌وجوی گفتگوها</string>
+</resources>

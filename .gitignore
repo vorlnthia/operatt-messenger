@@ -46,3 +46,7 @@ proguard/
 
 import-summary.txt
 .navigation/
+
+# Operatt private Android signing material
+*.jks
+*.keystore

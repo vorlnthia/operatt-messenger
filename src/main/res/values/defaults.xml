@@ -32,14 +32,14 @@
     <bool name="display_enter_key">false</bool>
     <bool name="manually_change_presence">false</bool>
     <bool name="away_when_screen_off">false</bool>
-    <bool name="enable_foreground_service">true</bool>
+    <bool name="enable_foreground_service">false</bool>
     <bool name="send_crash_reports">true</bool>
     <bool name="validate_hostname">false</bool>
     <bool name="show_qr_code_scan">true</bool>
     <bool name="show_individual_search_options">true</bool>
     <bool name="show_combined_search_options">false</bool>
     <bool name="scroll_to_bottom">true</bool>
-    <string name="omemo_setting_default">default_on</string>
+    <string name="omemo_setting_default">default_off</string>
     <bool name="use_share_location_plugin">false</bool>
     <bool name="start_searching">false</bool>
     <string name="video_compression">360</string>

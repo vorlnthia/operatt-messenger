@@ -16,6 +16,15 @@
             android:title="@string/pref_use_tor" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/operatt_background_category">
+        <SwitchPreferenceCompat
+            android:defaultValue="@bool/enable_foreground_service"
+            android:icon="@drawable/ic_settings_24dp"
+            android:key="enable_foreground_service"
+            android:summary="@string/operatt_background_mode_summary"
+            android:title="@string/operatt_background_mode_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/peer_to_peer">
 
         <SwitchPreferenceCompat

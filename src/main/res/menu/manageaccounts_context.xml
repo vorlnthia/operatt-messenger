@@ -16,6 +16,9 @@
         app:showAsAction="never"
         android:title="@string/mgmt_account_disable"/>
     <item
+        android:id="@+id/operatt_logout_keep_history"
+        android:title="@string/operatt_log_out" />
+    <item
         android:id="@+id/mgmt_account_delete"
         android:title="@string/mgmt_account_delete"/>
 

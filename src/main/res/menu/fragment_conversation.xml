@@ -58,6 +58,11 @@
                 android:title="@string/choose_file" />
 
             <item
+                android:id="@+id/attach_create_sticker"
+                android:icon="@drawable/ic_image_24dp"
+                android:title="@string/operatt_create_sticker" />
+
+            <item
                 android:id="@+id/attach_choose_picture"
                 android:icon="@drawable/ic_image_24dp"
                 android:title="@string/attach_choose_picture" />
@@ -104,6 +109,11 @@
         android:orderInCategory="48"
         android:title="@string/search_messages"
         android:visible="@bool/show_individual_search_options"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_restore_history"
+        android:orderInCategory="49"
+        android:title="@string/operatt_restore_history"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_clear_history"

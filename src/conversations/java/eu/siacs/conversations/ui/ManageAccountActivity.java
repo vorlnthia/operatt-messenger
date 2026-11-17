@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.databinding.DataBindingUtil;
 import com.google.common.base.Strings;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import eu.siacs.conversations.Config;
 import eu.siacs.conversations.R;
 import eu.siacs.conversations.databinding.ActivityManageAccountsBinding;
@@ -181,6 +182,9 @@ public class ManageAccountActivity extends XmppActivity
             case R.id.mgmt_account_enable:
                 enableAccount(selectedAccount);
                 return true;
+            case R.id.operatt_logout_keep_history:
+                signOutKeepHistory(selectedAccount);
+                return true;
             case R.id.mgmt_account_delete:
                 deleteAccount(selectedAccount);
                 return true;
@@ -206,6 +210,9 @@ public class ManageAccountActivity extends XmppActivity
         switch (item.getItemId()) {
             case R.id.action_add_account:
                 startActivity(new Intent(this, EditAccountActivity.class));
+                break;
+            case R.id.action_operatt_create_account:
+                startActivity(new Intent(this, MagicCreateActivity.class));
                 break;
             case R.id.action_import_backup:
                 if (hasStoragePermission(REQUEST_IMPORT_BACKUP)) {
@@ -322,6 +329,22 @@ public class ManageAccountActivity extends XmppActivity
         for (Account account : list) {
             enableAccount(account);
         }
+    }
+
+    private void signOutKeepHistory(final Account account) {
+        if (account == null) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.operatt_log_out)
+                .setMessage(R.string.operatt_log_out_notice)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.operatt_log_out, (dialog, which) -> {
+                    account.setPassword("");
+                    account.setOption(Account.OPTION_DISABLED, true);
+                    account.setOption(Account.OPTION_SOFT_DISABLED, false);
+                    if (!xmppConnectionService.updateAccount(account)) {
+                        Toast.makeText(this, R.string.unable_to_update_account, Toast.LENGTH_LONG).show();
+                    }
+                }).show();
     }
 
     private void disableAccount(final Account account) {

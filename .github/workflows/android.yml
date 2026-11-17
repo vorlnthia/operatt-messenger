@@ -1,32 +1,41 @@
-name: Android CI
-
+name: Operatt Android
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
-
+    branches: [master]
+  workflow_dispatch:
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    timeout-minutes: 40
     steps:
-    - uses: actions/checkout@v2
-    - name: set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'adopt'
-    - name: Download WebRTC
-      run: mkdir libs && wget -O libs/libwebrtc-m92.aar https://gultsch.de/files/libwebrtc-m92.aar
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build Snikket
-      run: ./gradlew assembleConversationsFreeDebug
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Snikket all-flavors (debug)
-        path: ./build/outputs/apk/**/debug/Snikket-*.apk
-
-      
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build Android APK
+        run: bash gradlew assembleConversationsFreeDebug --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operatt-messenger-debug
+          path: build/outputs/apk/conversationsFree/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload universal Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: operatt-universal-android
+          path: build/outputs/apk/conversationsFree/debug/*universal*.apk
+          if-no-files-found: error
+          retention-days: 14

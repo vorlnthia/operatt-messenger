@@ -15,7 +15,7 @@ public final class Config {
     public static final Jid BUG_REPORTS = Jid.of("bugs@snikket.org");
     public static final Uri HELP = Uri.parse("https://snikket.org/faq/?ref=app");
 
-    public static final String MAGIC_CREATE_DOMAIN = "snikket.im";
+    public static final String MAGIC_CREATE_DOMAIN = "chat.operatt.com";
 
     public static final Jid QUICKSY_DOMAIN = Jid.of("quicksy.im");
 

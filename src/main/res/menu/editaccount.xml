@@ -64,4 +64,12 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/operatt_switch_accounts"
+        android:title="@string/operatt_switch_accounts"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/operatt_sign_out"
+        android:title="@string/operatt_sign_out"
+        app:showAsAction="never" />
 </menu>

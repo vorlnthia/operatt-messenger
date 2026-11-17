@@ -36,9 +36,19 @@
         android:visible="@bool/show_individual_search_options"
         app:showAsAction="never" />
     <item
+        android:id="@+id/operatt_sticker_studio"
+        android:orderInCategory="79"
+        android:title="@string/operatt_create_sticker"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_easy_invite"
         android:orderInCategory="89"
         android:title="@string/invite_to_app" />
+    <item
+        android:id="@+id/operatt_switch_accounts"
+        android:orderInCategory="85"
+        android:title="@string/operatt_switch_accounts"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_accounts"
         android:orderInCategory="90"
