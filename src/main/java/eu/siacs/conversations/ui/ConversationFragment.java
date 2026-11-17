@@ -49,6 +49,11 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
+import android.widget.GridLayout;
+import android.widget.ScrollView;
+import android.widget.ImageButton;
+import android.graphics.BitmapFactory;
+import java.io.File;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -1288,6 +1293,8 @@ public class ConversationFragment extends XmppFragment
         binding.textinput.setRichContentListener(new String[] {"image/*"}, mEditorContentListener);
 
         binding.textSendButton.setOnClickListener(this.mSendButtonListener);
+        binding.operattEmojiStickerButton.setOnClickListener(v -> showEmojiStickerPicker());
+        binding.operattInlineAttachButton.setOnClickListener(v -> showAttachmentSheet());
 
         binding.scrollToBottomButton.setOnClickListener(this.mScrollButtonListener);
         binding.messagesView.setOnScrollListener(mOnScrollListener);
@@ -1720,6 +1727,85 @@ public class ConversationFragment extends XmppFragment
             }
         }
         sheet.setContentView(content);
+        sheet.show();
+    }
+
+    /** Inline emoji and on-device sticker tray. Tapping a saved sticker sends it to this chat. */
+    private void showEmojiStickerPicker() {
+        if (conversation == null) return;
+        final BottomSheetDialog sheet = new BottomSheetDialog(requireContext());
+        final LinearLayout root = new LinearLayout(requireContext());
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(toDp(12), toDp(12), toDp(12), toDp(20));
+        final LinearLayout tabs = new LinearLayout(requireContext());
+        tabs.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(tabs, new LinearLayout.LayoutParams(-1, toDp(50)));
+        final com.google.android.material.button.MaterialButton emojiTab = new com.google.android.material.button.MaterialButton(requireContext());
+        final com.google.android.material.button.MaterialButton stickerTab = new com.google.android.material.button.MaterialButton(requireContext());
+        emojiTab.setText(R.string.operatt_emojis);
+        stickerTab.setText(R.string.operatt_stickers);
+        tabs.addView(emojiTab, new LinearLayout.LayoutParams(0, -1, 1));
+        tabs.addView(stickerTab, new LinearLayout.LayoutParams(0, -1, 1));
+        final ScrollView scroll = new ScrollView(requireContext());
+        root.addView(scroll, new LinearLayout.LayoutParams(-1, toDp(275)));
+        final GridLayout emojiGrid = new GridLayout(requireContext());
+        emojiGrid.setColumnCount(6);
+        final String[] emojis = {"😀","😂","🥹","😍","😘","😎","😢","😭","😡","❤️","💙","💚","👍","👎","👏","🙏","🔥","✨","🎉","💪","🤝","👋","💯","🙌","🤔","😴","🥰","💔","😅","🤗","💐","🎂","💫","✅","👀","🙃"};
+        for (String emoji : emojis) {
+            TextView cell = new TextView(requireContext());
+            cell.setText(emoji);
+            cell.setTextSize(28);
+            cell.setGravity(Gravity.CENTER);
+            emojiGrid.addView(cell, new ViewGroup.LayoutParams(toDp(54), toDp(48)));
+            cell.setOnClickListener(v -> {
+                final int index = Math.max(0, binding.textinput.getSelectionStart());
+                binding.textinput.getText().insert(index, emoji);
+            });
+        }
+        final LinearLayout stickersPanel = new LinearLayout(requireContext());
+        stickersPanel.setOrientation(LinearLayout.VERTICAL);
+        final com.google.android.material.button.MaterialButton createSticker = new com.google.android.material.button.MaterialButton(requireContext());
+        createSticker.setText(R.string.operatt_create_sticker);
+        stickersPanel.addView(createSticker);
+        createSticker.setOnClickListener(v -> {
+            sheet.dismiss();
+            final Intent studio = new Intent(requireContext(), StickerStudioActivity.class);
+            studio.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
+            startActivityForResult(studio, ATTACHMENT_CHOICE_CHOOSE_FILE);
+        });
+        final GridLayout stickerGrid = new GridLayout(requireContext());
+        stickerGrid.setColumnCount(4);
+        stickersPanel.addView(stickerGrid);
+        final File folder = new File(new File(requireContext().getFilesDir(), "Images"), "Stickers");
+        final File[] files = folder.listFiles((parent, name) -> name.endsWith(".png"));
+        if (files != null) {
+            java.util.Arrays.sort(files, (a,b) -> Long.compare(b.lastModified(), a.lastModified()));
+            for (int n = 0; n < Math.min(files.length, 60); n++) {
+                final File file = files[n];
+                final ImageButton sticker = new ImageButton(requireContext());
+                sticker.setContentDescription(getString(R.string.operatt_send_sticker));
+                sticker.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                final BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inSampleSize = 4;
+                sticker.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), opts));
+                stickerGrid.addView(sticker, new ViewGroup.LayoutParams(toDp(76), toDp(76)));
+                sticker.setOnClickListener(v -> {
+                    sheet.dismiss();
+                    try {
+                        final Uri uri = FileBackend.getUriForFile(requireContext(), file);
+                        mediaPreviewAdapter.addMediaPreviews(Attachment.of(requireContext(), uri, Attachment.Type.IMAGE));
+                        toggleInputMethod();
+                        sendMessage();
+                    } catch (RuntimeException error) {
+                        Toast.makeText(requireContext(), R.string.operatt_sticker_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+        emojiTab.setOnClickListener(v -> { scroll.removeAllViews(); scroll.addView(emojiGrid); });
+        stickerTab.setOnClickListener(v -> { scroll.removeAllViews(); scroll.addView(stickersPanel); });
+        scroll.addView(emojiGrid);
+        sheet.setContentView(root);
         sheet.show();
     }
 
@@ -3179,10 +3265,12 @@ public class ConversationFragment extends XmppFragment
         final Presence.Availability status;
         final String text = CharSequences.nullToEmpty(this.binding.textinput.getText());
         final SendButtonAction action;
-        if (hasAttachments) {
+        if (hasAttachments || !text.isEmpty()) {
             action = SendButtonAction.TEXT;
         } else {
-            action = SendButtonTool.getAction(getActivity(), c, text);
+            final SendButtonAction calculated = SendButtonTool.getAction(getActivity(), c, text);
+            action = calculated == SendButtonAction.CANCEL || calculated == SendButtonAction.SEND_LOCATION
+                    ? calculated : SendButtonAction.RECORD_VOICE;
         }
         if (c.getAccount().getStatus() == Account.State.ONLINE) {
             if (connection.getManager(MessageArchiveManager.class).isCatchingUp(c)) {
@@ -3201,9 +3289,13 @@ public class ConversationFragment extends XmppFragment
         this.binding.textSendButton.setTag(action);
         this.binding.textSendButton.setIconResource(
                 SendButtonTool.getSendButtonImageResource(action));
-        this.binding.textSendButton.setIconTint(
-                ColorStateList.valueOf(
-                        SendButtonTool.getSendButtonColor(this.binding.textSendButton, status)));
+        this.binding.textSendButton.setIconTint(ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(requireContext(),
+                        R.color.operatt_composer_icon_white)));
+        this.binding.textSendButton.setContentDescription(getString(
+                action == SendButtonAction.RECORD_VOICE ? R.string.attach_record_voice
+                        : action == SendButtonAction.SEND_LOCATION ? R.string.send_location
+                        : R.string.send_message));
     }
 
     protected void updateStatusMessages() {

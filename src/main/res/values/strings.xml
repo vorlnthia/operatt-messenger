@@ -1223,4 +1223,9 @@
     <string name="operatt_profile_information">Your profile</string>
     <string name="operatt_profile_hint">Use Edit Info to change your name and account settings. Profile posts and stories are not available yet.</string>
     <string name="operatt_attachment_title">Share with this chat</string>
+    <string name="operatt_emojis_stickers">Emoji and stickers</string>
+    <string name="operatt_emojis">Emoji</string>
+    <string name="operatt_stickers">Stickers</string>
+    <string name="operatt_send_sticker">Send sticker</string>
+    <string name="operatt_message_placeholder">Message</string>
 </resources>
