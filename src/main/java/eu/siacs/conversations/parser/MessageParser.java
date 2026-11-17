@@ -344,6 +344,7 @@ public class MessageParser extends AbstractParser
             if (storyEvent != null) {
                 eu.siacs.conversations.services.OperattStoryManager.handleIncoming(
                         mXmppConnectionService, account, counterpart, storyEvent);
+                mXmppConnectionService.updateConversationUi();
                 return;
             }
         }
