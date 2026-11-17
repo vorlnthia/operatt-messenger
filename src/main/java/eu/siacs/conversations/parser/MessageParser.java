@@ -756,6 +756,11 @@ public class MessageParser extends AbstractParser
                 getManager(DeliveryReceiptManager.class).processRequest(packet, query);
             }
 
+            if (eu.siacs.conversations.services.OperattLocalDelete.hidden(
+                    mXmppConnectionService, account, conversation, message)) {
+                conversation.remove(message);
+                return;
+            }
             mXmppConnectionService.databaseBackend.createMessage(message);
             final HttpConnectionManager manager =
                     this.mXmppConnectionService.getHttpConnectionManager();
