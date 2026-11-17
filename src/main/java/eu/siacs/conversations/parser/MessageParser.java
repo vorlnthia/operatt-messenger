@@ -832,7 +832,9 @@ public class MessageParser extends AbstractParser
             }
 
             if (original.hasExtension(Retract.class)) {
-                if (originalFrom != null && originalFrom.isBareJid()) {
+                if (original.getType()
+                        == im.conversations.android.xmpp.model.stanza.Message.Type.GROUPCHAT
+                        && originalFrom != null && originalFrom.isBareJid()) {
                     getManager(ModerationManager.class).handleRetraction(original);
                 } else if (original.getType()
                         == im.conversations.android.xmpp.model.stanza.Message.Type.CHAT) {

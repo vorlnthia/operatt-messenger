@@ -134,7 +134,7 @@ public final class StickerStudioActivity extends AppCompatActivity {
     private Button button(String text) {
         Button result = new Button(this);
         result.setText(text);
-        result.setTextAllCaps(false);
+        result.setAllCaps(false);
         result.setTextSize(12);
         return result;
     }
