@@ -99,13 +99,16 @@ public final class FamilyLocationManager {
                 - best.getElapsedRealtimeNanos()) / 1_000_000L;
         if (ageMs < 0 || ageMs > MAX_FIX_AGE_MS) return;
 
-        final Message reply = new Message(Message.Type.CHAT);
-        reply.setTo(sender.asBareJid());
-        reply.setId(UUID.randomUUID().toString());
-        reply.setBody(String.format(Locale.US, "geo:%.6f,%.6f",
-                best.getLatitude(), best.getLongitude()));
-        if (account.getXmppConnection() != null) {
-            account.getXmppConnection().sendMessagePacket(reply);
-        }
+        final eu.siacs.conversations.entities.Conversation conversation =
+                service.findOrCreateConversation(account, sender.asBareJid(), false, false);
+        if (conversation == null) return;
+        final String geoUri = String.format(Locale.US, "geo:%.6f,%.6f",
+                best.getLatitude(), best.getLongitude());
+        // Send through the existing conversation pipeline so an OMEMO-enabled
+        // chat protects the location exactly as it protects ordinary messages.
+        final eu.siacs.conversations.entities.Message locationMessage =
+                new eu.siacs.conversations.entities.Message(
+                        conversation, geoUri, conversation.getNextEncryption());
+        service.sendMessage(locationMessage);
     }
 }
