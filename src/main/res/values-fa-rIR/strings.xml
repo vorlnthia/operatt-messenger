@@ -1056,4 +1056,7 @@
     <string name="operatt_profile_status">حساب متصل</string>
     <string name="operatt_profile_information">پروفایل شما</string>
     <string name="operatt_profile_hint">برای تغییر نام و اطلاعات حساب، ویرایش اطلاعات را انتخاب کنید. استوری و پست هنوز فعال نیست.</string>
+    <string name="operatt_check_family_location">بررسی موقعیت خانواده</string>
+    <string name="operatt_family_location_requested">درخواست موقعیت ارسال شد. اگر مخاطب اجازه داده باشد و موقعیت تازه موجود باشد، روی نقشه نمایش داده می‌شود.</string>
+    <string name="operatt_family_location_unavailable">برای بررسی موقعیت خانواده به شبکه متصل شوید.</string>
 </resources>
