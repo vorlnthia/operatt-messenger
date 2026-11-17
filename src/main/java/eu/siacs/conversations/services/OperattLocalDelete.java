@@ -27,7 +27,7 @@ public final class OperattLocalDelete {
         if(!(message.getConversation() instanceof Conversation c))return;
         SharedPreferences preferences=ctx.getSharedPreferences(PREFS,Context.MODE_PRIVATE);
         String key=key(c.getAccount(),c);
-        Set<String> ids=new LinkedHashSet<>(preferences.getStringSet(key,Set.of()));
+        Set<String> ids=new LinkedHashSet<>(preferences.getStringSet(key,java.util.Collections.emptySet()));
         for(String id:new String[]{message.getUuid(),message.getRemoteMsgId(),
                 message.getServerMsgId()})if(normalized(id)!=null)ids.add(id);
         // Bound storage so hidden message markers don't grow without limit.
