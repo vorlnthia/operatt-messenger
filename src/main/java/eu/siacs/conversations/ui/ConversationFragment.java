@@ -49,6 +49,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView.OnEditorActionListener;
@@ -65,6 +67,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.color.MaterialColors;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -564,6 +568,13 @@ public class ConversationFragment extends XmppFragment
                 @Override
                 public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                     menuInflater.inflate(R.menu.fragment_conversation, menu);
+                    final MenuItem attachments = menu.findItem(R.id.action_attach_file);
+                    if (attachments != null) {
+                        attachments.setOnMenuItemClickListener(item -> {
+                            showAttachmentSheet();
+                            return true;
+                        });
+                    }
                     final MenuItem menuMucDetails = menu.findItem(R.id.action_muc_details);
                     final MenuItem menuContactDetails = menu.findItem(R.id.action_contact_details);
                     final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
@@ -642,6 +653,9 @@ public class ConversationFragment extends XmppFragment
                         case R.id.encryption_choice_pgp:
                         case R.id.encryption_choice_none:
                             handleEncryptionSelection(menuItem);
+                            break;
+                        case R.id.action_attach_file:
+                            showAttachmentSheet();
                             break;
                         case R.id.attach_create_sticker:
                             final Intent studio = new Intent(requireContext(), StickerStudioActivity.class);
@@ -1631,6 +1645,81 @@ public class ConversationFragment extends XmppFragment
             }
             default -> super.onContextItemSelected(item);
         };
+    }
+
+    private int toDp(final int dimension) {
+        return Math.round(dimension * getResources().getDisplayMetrics().density);
+    }
+
+    private void showAttachmentSheet() {
+        final BottomSheetDialog sheet = new BottomSheetDialog(requireContext());
+        final LinearLayout content = new LinearLayout(requireContext());
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(toDp(14), toDp(18), toDp(14), toDp(26));
+        final TextView heading = new TextView(requireContext());
+        heading.setText(R.string.operatt_attachment_title);
+        heading.setTextColor(MaterialColors.getColor(content, com.google.android.material.R.attr.colorOnSurface));
+        heading.setTextSize(21);
+        heading.setTypeface(null, android.graphics.Typeface.BOLD);
+        heading.setPadding(toDp(12), 0, 0, toDp(18));
+        content.addView(heading);
+        final int[] icons = {
+                R.drawable.ic_image_24dp, R.drawable.ic_camera_alt_24dp,
+                R.drawable.ic_description_24dp, R.drawable.ic_location_pin_24dp,
+                R.drawable.ic_image_24dp, R.drawable.ic_mic_24dp,
+                R.drawable.ic_videocam_24dp};
+        final int[] titles = {
+                R.string.attach_choose_picture, R.string.attach_take_picture,
+                R.string.choose_file, R.string.send_location,
+                R.string.operatt_create_sticker, R.string.attach_record_voice,
+                R.string.attach_record_video};
+        final int[] actions = {
+                ATTACHMENT_CHOICE_CHOOSE_IMAGE, ATTACHMENT_CHOICE_TAKE_PHOTO,
+                ATTACHMENT_CHOICE_CHOOSE_FILE, ATTACHMENT_CHOICE_LOCATION,
+                -1, ATTACHMENT_CHOICE_RECORD_VOICE, ATTACHMENT_CHOICE_RECORD_VIDEO};
+        for (int row = 0; row < 2; row++) {
+            final LinearLayout line = new LinearLayout(requireContext());
+            line.setOrientation(LinearLayout.HORIZONTAL);
+            line.setGravity(Gravity.CENTER);
+            content.addView(line, new LinearLayout.LayoutParams(-1, toDp(102)));
+            for (int col = 0; col < 4; col++) {
+                final int index = row * 4 + col;
+                if (index >= actions.length) {
+                    line.addView(new View(requireContext()), new LinearLayout.LayoutParams(0, 1, 1));
+                    continue;
+                }
+                final LinearLayout tile = new LinearLayout(requireContext());
+                tile.setOrientation(LinearLayout.VERTICAL);
+                tile.setGravity(Gravity.CENTER);
+                tile.setContentDescription(getString(titles[index]));
+                final ImageView icon = new ImageView(requireContext());
+                icon.setImageResource(icons[index]);
+                icon.setColorFilter(MaterialColors.getColor(content, com.google.android.material.R.attr.colorPrimary));
+                final LinearLayout.LayoutParams ip = new LinearLayout.LayoutParams(toDp(36), toDp(36));
+                ip.bottomMargin = toDp(9);
+                tile.addView(icon, ip);
+                final TextView label = new TextView(requireContext());
+                label.setText(titles[index]);
+                label.setTextSize(12);
+                label.setGravity(Gravity.CENTER);
+                label.setMaxLines(2);
+                label.setTextColor(MaterialColors.getColor(content, com.google.android.material.R.attr.colorOnSurface));
+                tile.addView(label);
+                line.addView(tile, new LinearLayout.LayoutParams(0, -1, 1));
+                tile.setOnClickListener(v -> {
+                    sheet.dismiss();
+                    if (actions[index] == -1) {
+                        final Intent editor = new Intent(requireContext(), StickerStudioActivity.class);
+                        editor.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
+                        startActivityForResult(editor, ATTACHMENT_CHOICE_CHOOSE_FILE);
+                    } else {
+                        attachFile(actions[index]);
+                    }
+                });
+            }
+        }
+        sheet.setContentView(content);
+        sheet.show();
     }
 
     private void startSearch() {
