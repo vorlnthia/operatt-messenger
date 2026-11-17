@@ -230,7 +230,7 @@ public class RtpSessionActivity extends XmppActivity
     }
 
     private void onVideoScreenClick(final View view) {
-        if (view == binding.localVideo) {
+        if (view == binding.localVideo || view == binding.remoteVideo) {
             localVideoFullscreen = !localVideoFullscreen;
             try {
                 updateVideoViews(requireRtpConnection().getEndUserState());
