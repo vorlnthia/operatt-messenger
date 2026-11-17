@@ -234,7 +234,9 @@
  </FrameLayout>
  <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/operatt_bottom_nav"
   android:layout_width="match_parent" android:layout_height="wrap_content"
-  android:minHeight="70dp" android:background="?colorSurface" app:menu="@menu/operatt_bottom_navigation"
+  android:layout_marginHorizontal="18dp" android:layout_marginTop="3dp" android:layout_marginBottom="9dp"
+  android:minHeight="68dp" android:background="@drawable/operatt_bottom_floating"
+  android:elevation="8dp" app:menu="@menu/operatt_bottom_navigation"
   app:labelVisibilityMode="labeled" app:itemIconSize="24dp"
   app:itemTextColor="@color/operatt_nav_icon_tint" app:itemIconTint="@color/operatt_nav_icon_tint"/>
 </LinearLayout></layout>

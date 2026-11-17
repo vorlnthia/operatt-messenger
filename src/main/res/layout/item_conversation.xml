@@ -41,6 +41,9 @@
                     <TextView
                         android:id="@+id/conversation_name"
                         style="?textAppearanceTitleMedium"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="?colorOnSurface"
+                        android:textSize="16sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignStart="@+id/conversation_lastwrapper"
@@ -92,6 +95,9 @@
                             <TextView
                                 android:id="@+id/conversation_lastmsg"
                                 style="?textAppearanceBodyMedium"
+                                android:fontFamily="sans-serif"
+                                android:textSize="14sp"
+                                android:textColor="?colorOnSurfaceVariant"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"

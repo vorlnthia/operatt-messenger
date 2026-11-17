@@ -641,6 +641,8 @@ public class ConversationFragment extends XmppFragment
                         menuUnmute.setVisible(false);
                     }
                     ConversationMenuConfigurator.configureAttachmentMenu(c, menu);
+                    // Attachment actions are now alongside the text field rather than in the toolbar.
+                    menu.findItem(R.id.action_attach_file).setVisible(false);
                     ConversationMenuConfigurator.configureEncryptionMenu(c, menu);
                     if (c.getBooleanAttribute(Conversation.ATTRIBUTE_PINNED_ON_TOP, false)) {
                         menuTogglePinned.setTitle(R.string.remove_from_favorites);
@@ -3277,6 +3279,8 @@ public class ConversationFragment extends XmppFragment
         this.binding.textinput.setFocusable(canWrite);
         this.binding.textinput.setFocusableInTouchMode(canWrite);
         this.binding.textSendButton.setEnabled(canWrite);
+        this.binding.operattEmojiStickerButton.setEnabled(canWrite);
+        this.binding.operattInlineAttachButton.setEnabled(canWrite);
         this.binding.textinput.setCursorVisible(canWrite);
         this.binding.textinput.setEnabled(canWrite);
     }
