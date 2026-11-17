@@ -41,3 +41,23 @@ Not implemented: contact location retrieval without recipient permission, comple
 - Voice/video audio output selection, video preview switching, low-power preference migration and the luxury-style call log already existed in the preserved `operatt-onboarding` line.
 - Stories and their media editor, exact last-seen across offline clients, push-backed guaranteed call delivery, and full battery profiling remain incomplete.
 - The build is a debug-signed release candidate for testing. Successful CI compilation is not evidence of two-device usability testing or production-signing readiness.
+
+## Version 5 Stories + family refinement (17 November 2026)
+
+Build SHA: dddd9cc3b6594be1cedb3a0aed171bc25652b287 (CI run 44144095182, Android debug build succeeded).
+
+Implemented:
+- A dedicated Stories page on v5's bottom navigation. Text/photo/video stories are sent to individually selected roster contacts using proprietary Operatt XMPP stanzas. Media uses the configured XMPP server's HTTP upload capability, subject to server availability and upload limits. Stories expire after 24 hours in the client feed; owners retain a device-local archive and can highlight entries.
+- View acknowledgments from Operatt clients, reply in a normal chat, editable caption on live own stories, and removal propagation to Operatt recipients.
+- Incoming story payloads are authenticated by XMPP peer routing and checked against the recipient's roster; unknown/blocked senders are rejected.
+- Per-message “Delete for me” with device-local hidden-message identifiers to prevent ordinary MAM re-download of the same IDs; “Delete for everyone” remains best effort, and deleting another author's messages requires their author-side opt-in.
+- The one-to-one chat header distinguishes our connection state from the contact's actual presence. Online and typing labels require real protocol evidence; last seen is shown only where available and permitted.
+- Family location approvals remain individual, revocable, and reciprocal when both people opt in. Android notification activity is posted upon approval/change and upon an authorized location check (subject to the operating system's notification permission and user settings).
+- An idle service with no enabled accounts no longer requests sticky restart or repeated idle wakeups. The active-call foreground service remains in place.
+
+Limitations:
+- This is an Android debug-signed build, *not* a production-signed release and not a verified two-device test.
+- Media URLs can remain retrievable from an HTTP media server after story expiry/removal; stories are not end-to-end encrypted just because direct chats may use OMEMO.
+- Story text overlay is caption-level. Video trimming, advanced stickers/filters, cloud story archives, server-enforced media expiry, and full Telegram/WhatsApp feature parity are not implemented.
+- Near-instant delivery with the app completely suspended, low idle battery draw, and reliably updated family locations still require verified XMPP push/FCM/UnifiedPush infrastructure and handset validation. The current family request responds only with an OS location fix newer than ten minutes, if available.
+- Contact last-seen cannot be exact when the other account hides or does not publish that information.
