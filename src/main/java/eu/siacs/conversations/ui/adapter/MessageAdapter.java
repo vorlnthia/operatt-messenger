@@ -726,14 +726,18 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         }
     }
 
-    private void loadMoreMessages(final Conversation conversation) {
+    public void loadMoreMessages(final Conversation conversation) {
+        if (conversation.getAccount().getXmppConnection() == null) {
+            Toast.makeText(activity, R.string.operatt_history_connect_first, Toast.LENGTH_LONG).show();
+            return;
+        }
         final var connection = conversation.getAccount().getXmppConnection();
         conversation.setLastClearHistory(0, null);
         activity.xmppConnectionService.updateConversation(conversation);
         conversation.setHasMessagesLeftOnServer(true);
         conversation.setFirstMamReference(null);
         long timestamp = conversation.getLastMessageTransmitted().getTimestamp();
-        if (timestamp == 0) {
+        if (timestamp <= 0) {
             timestamp = System.currentTimeMillis();
         }
         conversation.messagesLoaded.set(true);

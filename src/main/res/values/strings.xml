@@ -1147,4 +1147,10 @@
     <string name="mobile_ticket">Mobile ticket</string>
     <string name="emoji_reactions">Emoji reactions</string>
     <string name="open_keyboard">Open keyboard</string>
+    <string name="operatt_restore_history">Retrieve history from server</string>
+    <string name="operatt_history_unavailable">This chat has no accessible server message archive, or you are offline.</string>
+    <string name="operatt_history_connect_first">Connect to your account before requesting history.</string>
+    <string name="operatt_background_category">Battery and background delivery</string>
+    <string name="operatt_background_mode_title">Keep connection active in background</string>
+    <string name="operatt_background_mode_summary">Uses more battery but helps deliver calls and messages immediately. When off, without push support, background delivery may be delayed or missed.</string>
 </resources>

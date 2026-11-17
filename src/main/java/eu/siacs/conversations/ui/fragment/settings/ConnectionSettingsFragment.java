@@ -61,6 +61,7 @@ public class ConnectionSettingsFragment extends XmppPreferenceFragment {
                 requireService().reinitializeMuclumbusService();
             }
             case AppSettings.SHOW_CONNECTION_OPTIONS -> reconnectAccounts();
+            case AppSettings.KEEP_FOREGROUND_SERVICE -> requireService().toggleForegroundService();
         }
         if (Arrays.asList(AppSettings.USE_TOR, AppSettings.SHOW_CONNECTION_OPTIONS).contains(key)) {
             final var appSettings = new AppSettings(requireContext());

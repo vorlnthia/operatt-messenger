@@ -670,6 +670,14 @@ public class ConversationFragment extends XmppFragment
                                     ChooseContactActivity.create(requireActivity(), conversation),
                                     REQUEST_INVITE_TO_CONVERSATION);
                             break;
+                        case R.id.action_restore_history:
+                            if (conversation.getAccount().getXmppConnection() != null
+                                    && hasMamSupport(conversation)) {
+                                messageListAdapter.loadMoreMessages(conversation);
+                            } else {
+                                Toast.makeText(requireContext(), R.string.operatt_history_unavailable, Toast.LENGTH_LONG).show();
+                            }
+                            break;
                         case R.id.action_clear_history:
                             clearHistoryDialog(conversation);
                             break;
