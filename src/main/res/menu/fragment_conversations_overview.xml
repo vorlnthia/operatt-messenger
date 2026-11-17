@@ -36,6 +36,11 @@
         android:visible="@bool/show_individual_search_options"
         app:showAsAction="never" />
     <item
+        android:id="@+id/operatt_call_history"
+        android:orderInCategory="77"
+        android:title="Calls"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/operatt_sticker_studio"
         android:orderInCategory="79"
         android:title="@string/operatt_create_sticker"
