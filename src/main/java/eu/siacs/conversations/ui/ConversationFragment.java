@@ -656,6 +656,9 @@ public class ConversationFragment extends XmppFragment
                         case R.id.attach_location:
                             handleAttachmentSelection(menuItem);
                             break;
+                        case R.id.action_my_coordinates:
+                            attachFile(ATTACHMENT_CHOICE_LOCATION);
+                            break;
                         case R.id.action_search:
                             startSearch();
                             break;

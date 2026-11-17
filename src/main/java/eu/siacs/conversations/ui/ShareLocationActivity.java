@@ -2,6 +2,11 @@ package eu.siacs.conversations.ui;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.Context;
+import android.content.ClipboardManager;
+import android.content.ClipData;
+import android.widget.Toast;
+import java.util.Locale;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -78,6 +83,16 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
         });
 
         this.binding.shareButton.setOnClickListener(this::shareLocation);
+        this.binding.copyCoordinatesButton.setOnClickListener(view -> {
+            if (this.myLoc == null) return;
+            final String coordinates = formatCoordinates(this.myLoc);
+            final ClipboardManager clipboard =
+                    (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(ClipData.newPlainText("Coordinates", coordinates));
+                Toast.makeText(this, R.string.operatt_coordinates_copied, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         this.marker_fixed_to_loc = isLocationEnabledAndAllowed();
 
@@ -91,6 +106,22 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
             }
             toggleFixedLocation();
         });
+        updateCoordinatesLabel();
+    }
+
+    private String formatCoordinates(final Location location) {
+        return String.format(Locale.US, "%.6f, %.6f", location.getLatitude(), location.getLongitude());
+    }
+
+    private void updateCoordinatesLabel() {
+        if (binding == null) return;
+        if (myLoc == null || !hasLocationPermissions()) {
+            binding.coordinatesLabel.setText(R.string.operatt_coordinates_unavailable);
+            binding.copyCoordinatesButton.setEnabled(false);
+        } else {
+            binding.coordinatesLabel.setText(formatCoordinates(myLoc));
+            binding.copyCoordinatesButton.setEnabled(true);
+        }
     }
 
     private void shareLocation(final View view) {
@@ -211,6 +242,7 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 
     @Override
     protected void updateUi() {
+        updateCoordinatesLabel();
         if (!hasLocationFeature || noAskAgain || isLocationEnabledAndAllowed()) {
             this.snackBar.dismiss();
         } else {

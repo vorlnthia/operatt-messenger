@@ -54,6 +54,10 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
         } else if (domain != null) {
             binding.instructions.setText(getString(R.string.magic_create_text_on_x, domain));
         }
+        // Invitation URLs already carry a server-issued one-time token. A manual
+        // token is needed only when the user entered the signup screen directly.
+        binding.registrationCodeLayout.setVisibility(
+                this.preAuth == null ? View.VISIBLE : View.GONE);
         binding.createAccount.setOnClickListener(
                 v -> {
                     try {
@@ -80,6 +84,11 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             binding.passwordLayout.setError(
                                     getString(R.string.operatt_password_too_short));
                             binding.password.requestFocus();
+                        } else if (this.preAuth == null
+                                && binding.registrationCode.getText().toString().trim().isEmpty()) {
+                            binding.registrationCodeLayout.setError(
+                                    getString(R.string.operatt_invite_required));
+                            binding.registrationCode.requestFocus();
                         } else if (!password.equals(confirmPassword)) {
                             binding.passwordLayout.setError(null);
                             binding.confirmPasswordLayout.setError(
@@ -89,6 +98,10 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             binding.usernameLayout.setError(null);
                             binding.passwordLayout.setError(null);
                             binding.confirmPasswordLayout.setError(null);
+                            binding.registrationCodeLayout.setError(null);
+                            final String invitationToken = this.preAuth != null
+                                    ? this.preAuth
+                                    : binding.registrationCode.getText().toString().trim();
                             Account account = xmppConnectionService.findAccountByJid(jid);
                             if (account == null) {
                                 account =
@@ -97,10 +110,8 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                                 account.setOption(Account.OPTION_DISABLED, true);
                                 account.setOption(Account.OPTION_MAGIC_CREATE, true);
                                 account.setOption(Account.OPTION_FIXED_USERNAME, fixedUsername);
-                                if (this.preAuth != null) {
-                                    account.setKey(
-                                            Account.KEY_PRE_AUTH_REGISTRATION_TOKEN, this.preAuth);
-                                }
+                                account.setKey(
+                                        Account.KEY_PRE_AUTH_REGISTRATION_TOKEN, invitationToken);
                                 xmppConnectionService.createAccount(account);
                             }
                             Intent intent =

@@ -89,6 +89,12 @@
         </menu>
     </item>
     <item
+        android:id="@+id/action_my_coordinates"
+        android:icon="@drawable/ic_location_pin_24dp"
+        android:orderInCategory="39"
+        android:title="@string/operatt_my_coordinates"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_contact_details"
         android:orderInCategory="40"
         android:title="@string/action_contact_details"
