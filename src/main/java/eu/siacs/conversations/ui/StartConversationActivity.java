@@ -249,8 +249,15 @@ public class StartConversationActivity extends XmppActivity
         }
     }
 
+    public static final String EXTRA_CREATE_GROUP = "operatt.open_new_group";
+
     public static void launch(Context context) {
+        context.startActivity(new Intent(context, StartConversationActivity.class));
+    }
+
+    public static void launchForNewGroup(Context context) {
         final Intent intent = new Intent(context, StartConversationActivity.class);
+        intent.putExtra(EXTRA_CREATE_GROUP, true);
         context.startActivity(intent);
     }
 
@@ -362,7 +369,7 @@ public class StartConversationActivity extends XmppActivity
                             mSearchEditText != null ? mSearchEditText.getText().toString() : null;
                     final String prefilled;
                     if (isValidJid(searchString)) {
-                        prefilled = Jid.of(searchString).toString();
+                        prefilled = Jid.of(eu.siacs.conversations.ui.util.OperattHandle.resolve(searchString)).toString();
                     } else {
                         prefilled = null;
                     }
@@ -429,7 +436,7 @@ public class StartConversationActivity extends XmppActivity
 
     public static boolean isValidJid(final String input) {
         try {
-            final Jid jid = Jid.ofUserInput(input);
+            final Jid jid = Jid.ofUserInput(eu.siacs.conversations.ui.util.OperattHandle.resolve(input));
             return !jid.isDomainJid();
         } catch (final IllegalArgumentException e) {
             return false;
@@ -1011,6 +1018,10 @@ public class StartConversationActivity extends XmppActivity
         }
         this.mActivatedAccounts.clear();
         this.mActivatedAccounts.addAll(AccountUtils.getEnabledAccounts(xmppConnectionService));
+        if (getIntent().getBooleanExtra(EXTRA_CREATE_GROUP, false)) {
+            getIntent().removeExtra(EXTRA_CREATE_GROUP);
+            if (!this.mActivatedAccounts.isEmpty()) showCreatePrivateGroupChatDialog();
+        }
         configureHomeButton();
         Intent intent = pendingViewIntent.pop();
         if (intent != null && processViewIntent(intent)) {

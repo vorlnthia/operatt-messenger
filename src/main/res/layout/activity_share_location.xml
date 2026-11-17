@@ -26,7 +26,7 @@
             android:id="@+id/snackbar_coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/button_bar"
+            android:layout_above="@+id/coordinates_bar"
             android:layout_below="@id/app_bar_layout">
 
 
@@ -47,6 +47,34 @@
                 android:src="@drawable/ic_gps_fixed_24dp" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:id="@+id/coordinates_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/button_bar"
+            android:background="?colorSurface"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/coordinates_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/operatt_coordinates_unavailable"
+                android:textIsSelectable="true"
+                android:textAppearance="?textAppearanceBodyMedium" />
+
+            <Button
+                android:id="@+id/copy_coordinates_button"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/operatt_copy_coordinates" />
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/button_bar"

@@ -58,7 +58,26 @@ public class Conversations extends Application {
         EmojiInitializationService.execute(getApplicationContext());
         ExceptionHelper.init(getApplicationContext());
         SettingsUtils.applyThemeSettings(this);
+        applyReducedBackgroundModeOnUpgrade();
         scheduleWeeklyBackupIfDefault();
+    }
+
+    /** Remove the old sticky foreground-service preference on the first v7 launch.
+     * An existing install can inherit a true value from earlier builds even though
+     * the current default is false. This one-time migration is intentionally
+     * conservative: active call and transcoding services remain foreground.
+     * Users can opt back into persistent connectivity in Connection & Battery.
+     * A proper push gateway is still required for reliable instant delivery
+     * after Android suspends background sockets.
+     */
+    private void applyReducedBackgroundModeOnUpgrade() {
+        final var prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("operatt_low_power_migration_v7", false)) {
+            prefs.edit()
+                    .putBoolean(eu.siacs.conversations.AppSettings.KEEP_FOREGROUND_SERVICE, false)
+                    .putBoolean("operatt_low_power_migration_v7", true)
+                    .apply();
+        }
     }
 
     /** Initialize a seven-day backup only for installs that have not chosen another cadence.

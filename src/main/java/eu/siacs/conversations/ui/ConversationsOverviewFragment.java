@@ -45,6 +45,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import eu.siacs.conversations.entities.Contact;
+import eu.siacs.conversations.ui.util.AvatarWorkerTask;
+import java.util.Comparator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
@@ -74,6 +80,8 @@ import eu.siacs.conversations.ui.interfaces.OnConversationSelected;
 import eu.siacs.conversations.ui.util.PendingActionHelper;
 import eu.siacs.conversations.ui.util.PendingItem;
 import eu.siacs.conversations.ui.util.ScrollState;
+import eu.siacs.conversations.ui.util.OperattHandle;
+import androidx.appcompat.app.AppCompatDelegate;
 import eu.siacs.conversations.utils.AccountUtils;
 import eu.siacs.conversations.xmpp.manager.EasyOnboardingManager;
 import java.util.ArrayList;
@@ -88,6 +96,8 @@ public class ConversationsOverviewFragment extends XmppFragment {
             ConversationsOverviewFragment.class.getName() + ".scroll_state";
 
     private final List<Conversation> conversations = new ArrayList<>();
+    private final List<Contact> visibleContacts = new ArrayList<>();
+    private int currentTab = R.id.operatt_nav_chats;
     private final PendingItem<Conversation> swipedConversation = new PendingItem<>();
     private final PendingItem<ScrollState> pendingScrollState = new PendingItem<>();
     private FragmentConversationsOverviewBinding binding;
@@ -320,6 +330,8 @@ public class ConversationsOverviewFragment extends XmppFragment {
 
     @Override
     public void onPause() {
+        final View toolbar = requireActivity().findViewById(R.id.toolbar);
+        if (toolbar != null) toolbar.setVisibility(View.VISIBLE);
         pendingActionHelper.execute();
         super.onPause();
     }
@@ -335,11 +347,29 @@ public class ConversationsOverviewFragment extends XmppFragment {
         this.binding.fab.setOnClickListener(
                 (view) -> StartConversationActivity.launch(getActivity()));
         this.binding.operattMenuButton.setOnClickListener(view -> showOperattMenu());
+        this.binding.operattAllChatsButton.setOnClickListener(v -> showAccountFilterDialog());
         this.binding.operattSearchButton.setOnClickListener(
                 (view) -> startActivity(new Intent(getActivity(), SearchActivity.class)));
         this.binding.operattAccountsButton.setOnClickListener(
                 (view) -> startActivity(new Intent(getActivity(), ManageAccountActivity.class)));
         this.binding.operattAccountFilterButton.setOnClickListener(view -> showAccountFilterDialog());
+        this.binding.operattBottomNav.setOnItemSelectedListener(item -> {
+            showTab(item.getItemId());
+            return true;
+        });
+        this.binding.operattBottomNav.setSelectedItemId(currentTab);
+        this.binding.operattContactAddButton.setOnClickListener(v -> StartConversationActivity.launch(getActivity()));
+        this.binding.operattContactsList.setOnItemClickListener((parent, view, position, id) -> {
+            if (position < 0 || position >= visibleContacts.size()) return;
+            final Contact contact = visibleContacts.get(position);
+            final var service = requireXmppActivity().xmppConnectionService;
+            if (service == null) return;
+            final Conversation target = service.findOrCreateConversation(contact.getAccount(), contact.getAddress(), false, true);
+            if (getActivity() instanceof OnConversationSelected callback) {
+                callback.onConversationSelected(target);
+            }
+        });
+        setupHomeActions();
 
         this.conversationsAdapter =
                 new ConversationAdapter(requireXmppActivity(), this.conversations);
@@ -396,6 +426,11 @@ public class ConversationsOverviewFragment extends XmppFragment {
     @Override
     public void onStart() {
         super.onStart();
+        final View toolbar = requireActivity().findViewById(R.id.toolbar);
+        if (toolbar != null && requireActivity().findViewById(R.id.secondary_fragment) == null) {
+            toolbar.setVisibility(View.GONE);
+        }
+        showTab(currentTab);
         if (requireXmppActivity().xmppConnectionService != null) {
             refresh();
         }
@@ -432,27 +467,141 @@ public class ConversationsOverviewFragment extends XmppFragment {
         EasyOnboardingInviteActivity.launch(account, requireContext());
     }
 
+    private void showTab(final int tab) {
+        currentTab = tab;
+        if (binding == null) return;
+        binding.operattChatsPanel.setVisibility(tab == R.id.operatt_nav_chats ? View.VISIBLE : View.GONE);
+        binding.operattContactsPanel.setVisibility(tab == R.id.operatt_nav_contacts ? View.VISIBLE : View.GONE);
+        binding.operattSettingsPanel.setVisibility(tab == R.id.operatt_nav_settings ? View.VISIBLE : View.GONE);
+        binding.operattProfilePanel.setVisibility(tab == R.id.operatt_nav_profile ? View.VISIBLE : View.GONE);
+        if (tab == R.id.operatt_nav_contacts) refreshContacts();
+        if (tab == R.id.operatt_nav_profile) refreshProfile();
+    }
+
+    private void openSettings(final String section) {
+        final Intent intent = new Intent(requireContext(), SettingsActivity.class);
+        intent.putExtra(SettingsActivity.EXTRA_SECTION, section);
+        startActivity(intent);
+    }
+
+    private void openSelectedProfile() {
+        final String jid = getSelectedAccountId();
+        if (jid == null) {
+            startActivity(new Intent(requireContext(), ManageAccountActivity.class));
+            return;
+        }
+        final Intent intent = new Intent(requireContext(), EditAccountActivity.class);
+        intent.putExtra("jid", jid);
+        startActivity(intent);
+    }
+
+    private void setupHomeActions() {
+        binding.operattSettingsAccount.setOnClickListener(v -> openSelectedProfile());
+        binding.operattSettingsAppearance.setOnClickListener(v -> openSettings("appearance"));
+        binding.operattSettingsPrivacy.setOnClickListener(v -> openSettings("privacy"));
+        binding.operattSettingsNotifications.setOnClickListener(v -> openSettings("notifications"));
+        binding.operattSettingsStorage.setOnClickListener(v -> openSettings("storage"));
+        binding.operattSettingsBackup.setOnClickListener(v -> openSettings("backup"));
+        binding.operattSettingsCalls.setOnClickListener(v -> startActivity(new Intent(requireContext(), OperattCallHistoryActivity.class)));
+        binding.operattSettingsConnection.setOnClickListener(v -> openSettings("connection"));
+        binding.operattSettingsAccounts.setOnClickListener(v -> startActivity(new Intent(requireContext(), ManageAccountActivity.class)));
+        binding.operattSettingsStickers.setOnClickListener(v -> startActivity(new Intent(requireContext(), StickerStudioActivity.class)));
+        binding.operattProfileEditButton.setOnClickListener(v -> openSelectedProfile());
+        binding.operattProfileManageButton.setOnClickListener(v -> startActivity(new Intent(requireContext(), ManageAccountActivity.class)));
+        binding.operattProfilePhotoButton.setOnClickListener(v -> {
+            final String jid = getSelectedAccountId();
+            if (jid == null) return;
+            final Intent i = new Intent(requireContext(), PublishProfilePictureActivity.class);
+            i.putExtra(XmppActivity.EXTRA_ACCOUNT, jid);
+            startActivity(i);
+        });
+    }
+
+    private void refreshProfile() {
+        if (binding == null) return;
+        final var service = requireXmppActivity().xmppConnectionService;
+        if (service == null) return;
+        final String jid = getSelectedAccountId();
+        for (Account account : service.getAccounts()) {
+            if (account.getJid().asBareJid().toString().equals(jid)) {
+                final String displayName = account.getDisplayName();
+                binding.operattProfileName.setText(displayName == null || displayName.isEmpty()
+                        ? jid.substring(0, jid.indexOf("@") >= 0 ? jid.indexOf("@") : jid.length())
+                        : displayName);
+                binding.operattProfileJid.setText(OperattHandle.display(jid));
+                binding.operattProfileStatus.setText(account.getStatus().getReadableId());
+                AvatarWorkerTask.loadAvatar(account, binding.operattProfileAvatar, R.dimen.avatar_on_details_screen_size);
+                return;
+            }
+        }
+    }
+
+    private void refreshContacts() {
+        if (binding == null) return;
+        final var service = requireXmppActivity().xmppConnectionService;
+        visibleContacts.clear();
+        if (service != null) {
+            final String jid = getSelectedAccountId();
+            for (Account account : service.getAccounts()) {
+                if (!account.getJid().asBareJid().toString().equals(jid)) continue;
+                for (Contact contact : account.getRoster().getContacts()) {
+                    if (contact.showInRoster() && !contact.isSelf()) visibleContacts.add(contact);
+                }
+            }
+        }
+        visibleContacts.sort(Comparator.comparing(Contact::getDisplayName, String.CASE_INSENSITIVE_ORDER));
+        final List<String> items = new ArrayList<>();
+        for (Contact contact : visibleContacts) {
+            items.add(contact.getDisplayName() + "  ·  " + OperattHandle.display(contact.getAddress().asBareJid().toString()));
+        }
+        binding.operattContactsHint.setText(items.isEmpty() ? R.string.operatt_contacts_hint : R.string.operatt_tab_contacts);
+        binding.operattContactsList.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, items));
+    }
+
+    /** Three main shortcuts, like a compact messenger overflow menu. */
     private void showOperattMenu() {
-        final String[] actions = getResources().getStringArray(R.array.operatt_quick_menu);
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.operatt_main_menu)
-                .setItems(actions, (dialog, selected) -> {
-                    switch (selected) {
-                        case 0 -> StartConversationActivity.launch(getActivity());
-                        case 1 -> {
-                            final String jid = getSelectedAccountId();
-                            if (jid != null) {
-                                final Intent intent = new Intent(requireContext(), EditAccountActivity.class);
-                                intent.putExtra("jid", jid);
-                                startActivity(intent);
-                            }
-                        }
-                        case 2 -> startActivity(new Intent(requireContext(), ManageAccountActivity.class));
-                        case 3 -> startActivity(new Intent(requireContext(), StickerStudioActivity.class));
-                        case 4, 5 -> startActivity(new Intent(requireContext(), SettingsActivity.class));
-                        default -> { }
-                    }
-                }).show();
+        final androidx.appcompat.widget.PopupMenu popup =
+                new androidx.appcompat.widget.PopupMenu(requireContext(), binding.operattMenuButton);
+        popup.getMenu().add(0, 1, 0, R.string.operatt_night_mode)
+                .setIcon(R.drawable.ic_dark_mode_24dp);
+        popup.getMenu().add(0, 2, 1, R.string.operatt_new_group)
+                .setIcon(R.drawable.ic_group_24dp);
+        popup.getMenu().add(0, 3, 2, R.string.operatt_saved_messages)
+                .setIcon(R.drawable.ic_bookmark_24dp);
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case 1 -> toggleNightMode();
+                case 2 -> StartConversationActivity.launchForNewGroup(requireContext());
+                case 3 -> openSavedMessages();
+                default -> { return false; }
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void toggleNightMode() {
+        final boolean dark = Activities.isNightMode(requireContext());
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .edit().putString("theme", dark ? "light" : "dark").apply();
+        AppCompatDelegate.setDefaultNightMode(
+                dark ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES);
+    }
+
+    private void openSavedMessages() {
+        final var service = requireXmppActivity().xmppConnectionService;
+        if (service == null) return;
+        final String jid = getSelectedAccountId();
+        for (Account account : service.getAccounts()) {
+            if (account.getJid().asBareJid().toString().equals(jid)) {
+                final Conversation selfChat = service.findOrCreateConversation(
+                        account, account.getJid().asBareJid(), false, true);
+                if (getActivity() instanceof OnConversationSelected callback) {
+                    callback.onConversationSelected(selfChat);
+                }
+                return;
+            }
+        }
     }
 
     private String getSelectedAccountId() {
@@ -481,8 +630,8 @@ public class ConversationsOverviewFragment extends XmppFragment {
         int checked = -1;
         final String selected = getSelectedAccountId();
         for (int i = 0; i < accounts.size(); i++) {
-            labels[i] = accounts.get(i).getJid().asBareJid().toString();
-            if (labels[i].equals(selected)) checked = i;
+            labels[i] = OperattHandle.display(accounts.get(i).getJid().asBareJid().toString());
+            if (accounts.get(i).getJid().asBareJid().toString().equals(selected)) checked = i;
         }
         labels[accounts.size()] = getString(R.string.operatt_manage_accounts);
         final var dialog = new MaterialAlertDialogBuilder(requireContext())
@@ -493,13 +642,41 @@ public class ConversationsOverviewFragment extends XmppFragment {
                         startActivity(new Intent(requireContext(), ManageAccountActivity.class));
                     } else {
                         PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
-                                .putString(OPERATT_SELECTED_ACCOUNT, labels[which]).apply();
+                                .putString(OPERATT_SELECTED_ACCOUNT,
+                                        accounts.get(which).getJid().asBareJid().toString()).apply();
                         refresh();
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         dialog.show();
+    }
+
+    private void updateConnectionLabel(final String selectedJid) {
+        if (binding == null) return;
+        final var service = requireXmppActivity().xmppConnectionService;
+        if (service == null) {
+            binding.operattConnectionStatus.setText(R.string.operatt_disconnected);
+            return;
+        }
+        for (Account account : service.getAccounts()) {
+            if (account.getJid().asBareJid().toString().equals(selectedJid)) {
+                binding.operattConnectionStatus.setText(connectionLabel(account));
+                final int color = androidx.core.content.ContextCompat.getColor(requireContext(),
+                        account.getStatus() == Account.State.ONLINE ? R.color.operatt_online : R.color.operatt_offline);
+                binding.operattConnectionStatus.setTextColor(color);
+                return;
+            }
+        }
+        binding.operattConnectionStatus.setText(R.string.operatt_disconnected);
+    }
+
+    private int connectionLabel(final Account account) {
+        return switch (account.getStatus()) {
+            case ONLINE -> R.string.operatt_connected;
+            case CONNECTING -> R.string.operatt_connecting;
+            default -> R.string.operatt_disconnected;
+        };
     }
 
     @Override
@@ -519,7 +696,10 @@ public class ConversationsOverviewFragment extends XmppFragment {
             this.conversations.removeIf(c -> !c.getAccount().getJid().asBareJid().toString().equals(selectedAccount));
         }
         this.binding.operattAccountFilterButton.setText(
-                selectedAccount == null ? getString(R.string.operatt_select_account) : selectedAccount);
+                selectedAccount == null ? getString(R.string.operatt_select_account) : OperattHandle.display(selectedAccount));
+        updateConnectionLabel(selectedAccount);
+        if (currentTab == R.id.operatt_nav_contacts) refreshContacts();
+        if (currentTab == R.id.operatt_nav_profile) refreshProfile();
         Conversation removed = this.swipedConversation.peek();
         if (removed != null) {
             if (removed.isRead()) {

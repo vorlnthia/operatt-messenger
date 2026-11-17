@@ -49,8 +49,16 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
+import android.widget.GridLayout;
+import android.widget.ScrollView;
+import android.widget.ImageButton;
+import android.graphics.BitmapFactory;
+import java.io.File;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import androidx.annotation.IdRes;
@@ -65,6 +73,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.color.MaterialColors;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -564,6 +574,13 @@ public class ConversationFragment extends XmppFragment
                 @Override
                 public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                     menuInflater.inflate(R.menu.fragment_conversation, menu);
+                    final MenuItem attachments = menu.findItem(R.id.action_attach_file);
+                    if (attachments != null) {
+                        attachments.setOnMenuItemClickListener(item -> {
+                            showAttachmentSheet();
+                            return true;
+                        });
+                    }
                     final MenuItem menuMucDetails = menu.findItem(R.id.action_muc_details);
                     final MenuItem menuContactDetails = menu.findItem(R.id.action_contact_details);
                     final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
@@ -574,6 +591,8 @@ public class ConversationFragment extends XmppFragment
                     final MenuItem menuVideoCall = menu.findItem(R.id.action_video_call);
                     final MenuItem menuTogglePinned = menu.findItem(R.id.action_toggle_pinned);
                     final var c = ConversationFragment.this.conversation;
+                    final MenuItem requestLocation = menu.findItem(R.id.action_request_contact_location);
+                    requestLocation.setVisible(c != null && c.getMode() == Conversation.MODE_SINGLE && !c.withSelf());
                     if (c == null) {
                         return;
                     }
@@ -622,6 +641,8 @@ public class ConversationFragment extends XmppFragment
                         menuUnmute.setVisible(false);
                     }
                     ConversationMenuConfigurator.configureAttachmentMenu(c, menu);
+                    // Attachment actions are now alongside the text field rather than in the toolbar.
+                    menu.findItem(R.id.action_attach_file).setVisible(false);
                     ConversationMenuConfigurator.configureEncryptionMenu(c, menu);
                     if (c.getBooleanAttribute(Conversation.ATTRIBUTE_PINNED_ON_TOP, false)) {
                         menuTogglePinned.setTitle(R.string.remove_from_favorites);
@@ -643,6 +664,9 @@ public class ConversationFragment extends XmppFragment
                         case R.id.encryption_choice_none:
                             handleEncryptionSelection(menuItem);
                             break;
+                        case R.id.action_attach_file:
+                            showAttachmentSheet();
+                            break;
                         case R.id.attach_create_sticker:
                             final Intent studio = new Intent(requireContext(), StickerStudioActivity.class);
                             studio.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
@@ -655,6 +679,24 @@ public class ConversationFragment extends XmppFragment
                         case R.id.attach_record_voice:
                         case R.id.attach_location:
                             handleAttachmentSelection(menuItem);
+                            break;
+                        case R.id.action_request_contact_location:
+                            requestContactLocation();
+                            break;
+                        case R.id.operatt_check_family_location:
+                            if (conversation != null && conversation.getMode() == Conversation.MODE_SINGLE
+                                    && conversation.getAccount().isOnlineAndConnected()) {
+                                eu.siacs.conversations.services.FamilyLocationManager.request(
+                                        conversation.getAccount(), conversation.getAddress());
+                                Toast.makeText(requireContext(), R.string.operatt_family_location_requested,
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(requireContext(), R.string.operatt_family_location_unavailable,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case R.id.action_my_coordinates:
+                            attachFile(ATTACHMENT_CHOICE_LOCATION);
                             break;
                         case R.id.action_search:
                             startSearch();
@@ -1270,6 +1312,8 @@ public class ConversationFragment extends XmppFragment
         binding.textinput.setRichContentListener(new String[] {"image/*"}, mEditorContentListener);
 
         binding.textSendButton.setOnClickListener(this.mSendButtonListener);
+        binding.operattEmojiStickerButton.setOnClickListener(v -> showEmojiStickerPicker());
+        binding.operattInlineAttachButton.setOnClickListener(v -> showAttachmentSheet());
 
         binding.scrollToBottomButton.setOnClickListener(this.mScrollButtonListener);
         binding.messagesView.setOnScrollListener(mOnScrollListener);
@@ -1424,8 +1468,9 @@ public class ConversationFragment extends XmppFragment
                                 : R.string.moderate_delete_dot_dot_dot);
                 retractMessage.setVisible(
                         c.getMode() == Conversation.MODE_SINGLE
-                                && m.getStatus() != Message.STATUS_RECEIVED
                                 && m.getStatus() != Message.STATUS_SEND_FAILED
+                                && (m.getStatus() != Message.STATUS_RECEIVED
+                                        || !Strings.isNullOrEmpty(m.getRemoteMsgId()))
                                 && !deleted);
                 correctMessage.setVisible(
                         !showError
@@ -1602,7 +1647,7 @@ public class ConversationFragment extends XmppFragment
                             final var account = selectedMessage.getConversation().getAccount();
                             final var connection = account.getXmppConnection();
                             if (connection == null || !connection.getManager(ModerationManager.class)
-                                    .retractOwnMessage(selectedMessage)) {
+                                    .retractMessageForEveryone(selectedMessage)) {
                                 Toast.makeText(requireContext(), R.string.operatt_retract_failed, Toast.LENGTH_LONG).show();
                             } else {
                                 refresh();
@@ -1628,6 +1673,179 @@ public class ConversationFragment extends XmppFragment
             }
             default -> super.onContextItemSelected(item);
         };
+    }
+
+    private int toDp(final int dimension) {
+        return Math.round(dimension * getResources().getDisplayMetrics().density);
+    }
+
+    /** Sends a request only; the other participant must explicitly share their GPS location. */
+    private void requestContactLocation() {
+        if (conversation == null || conversation.getMode() != Conversation.MODE_SINGLE
+                || conversation.withSelf()) return;
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.operatt_request_location)
+                .setMessage(R.string.operatt_request_location_explained)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.operatt_request_location, (dialog, which) -> {
+                    final Message request = new Message(conversation,
+                            getString(R.string.operatt_location_request_message),
+                            conversation.getNextEncryption());
+                    Message.configurePrivateMessage(request);
+                    requireXmppActivity().xmppConnectionService.sendMessage(request);
+                }).show();
+    }
+
+    private void showAttachmentSheet() {
+        final BottomSheetDialog sheet = new BottomSheetDialog(requireContext());
+        final LinearLayout content = new LinearLayout(requireContext());
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(toDp(14), toDp(18), toDp(14), toDp(26));
+        final TextView heading = new TextView(requireContext());
+        heading.setText(R.string.operatt_attachment_title);
+        heading.setTextColor(MaterialColors.getColor(content, com.google.android.material.R.attr.colorOnSurface));
+        heading.setTextSize(21);
+        heading.setTypeface(null, android.graphics.Typeface.BOLD);
+        heading.setPadding(toDp(12), 0, 0, toDp(18));
+        content.addView(heading);
+        final int[] icons = {
+                R.drawable.ic_image_24dp, R.drawable.ic_camera_alt_24dp,
+                R.drawable.ic_description_24dp, R.drawable.ic_location_pin_24dp,
+                R.drawable.ic_image_24dp, R.drawable.ic_mic_24dp,
+                R.drawable.ic_videocam_24dp, R.drawable.ic_location_pin_24dp};
+        final int[] titles = {
+                R.string.attach_choose_picture, R.string.attach_take_picture,
+                R.string.choose_file, R.string.send_location,
+                R.string.operatt_create_sticker, R.string.attach_record_voice,
+                R.string.attach_record_video, R.string.operatt_request_location};
+        final int[] actions = {
+                ATTACHMENT_CHOICE_CHOOSE_IMAGE, ATTACHMENT_CHOICE_TAKE_PHOTO,
+                ATTACHMENT_CHOICE_CHOOSE_FILE, ATTACHMENT_CHOICE_LOCATION,
+                -1, ATTACHMENT_CHOICE_RECORD_VOICE, ATTACHMENT_CHOICE_RECORD_VIDEO, -2};
+        for (int row = 0; row < 2; row++) {
+            final LinearLayout line = new LinearLayout(requireContext());
+            line.setOrientation(LinearLayout.HORIZONTAL);
+            line.setGravity(Gravity.CENTER);
+            content.addView(line, new LinearLayout.LayoutParams(-1, toDp(102)));
+            for (int col = 0; col < 4; col++) {
+                final int index = row * 4 + col;
+                if (index >= actions.length) {
+                    line.addView(new View(requireContext()), new LinearLayout.LayoutParams(0, 1, 1));
+                    continue;
+                }
+                final LinearLayout tile = new LinearLayout(requireContext());
+                tile.setOrientation(LinearLayout.VERTICAL);
+                tile.setGravity(Gravity.CENTER);
+                tile.setContentDescription(getString(titles[index]));
+                final ImageView icon = new ImageView(requireContext());
+                icon.setImageResource(icons[index]);
+                icon.setColorFilter(MaterialColors.getColor(content, androidx.appcompat.R.attr.colorPrimary));
+                final LinearLayout.LayoutParams ip = new LinearLayout.LayoutParams(toDp(36), toDp(36));
+                ip.bottomMargin = toDp(9);
+                tile.addView(icon, ip);
+                final TextView label = new TextView(requireContext());
+                label.setText(titles[index]);
+                label.setTextSize(12);
+                label.setGravity(Gravity.CENTER);
+                label.setMaxLines(2);
+                label.setTextColor(MaterialColors.getColor(content, com.google.android.material.R.attr.colorOnSurface));
+                tile.addView(label);
+                line.addView(tile, new LinearLayout.LayoutParams(0, -1, 1));
+                tile.setOnClickListener(v -> {
+                    sheet.dismiss();
+                    if (actions[index] == -2) {
+                        requestContactLocation();
+                    } else if (actions[index] == -1) {
+                        final Intent editor = new Intent(requireContext(), StickerStudioActivity.class);
+                        editor.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
+                        startActivityForResult(editor, ATTACHMENT_CHOICE_CHOOSE_FILE);
+                    } else {
+                        attachFile(actions[index]);
+                    }
+                });
+            }
+        }
+        sheet.setContentView(content);
+        sheet.show();
+    }
+
+    /** Inline emoji and on-device sticker tray. Tapping a saved sticker sends it to this chat. */
+    private void showEmojiStickerPicker() {
+        if (conversation == null) return;
+        final BottomSheetDialog sheet = new BottomSheetDialog(requireContext());
+        final LinearLayout root = new LinearLayout(requireContext());
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(toDp(12), toDp(12), toDp(12), toDp(20));
+        final LinearLayout tabs = new LinearLayout(requireContext());
+        tabs.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(tabs, new LinearLayout.LayoutParams(-1, toDp(50)));
+        final com.google.android.material.button.MaterialButton emojiTab = new com.google.android.material.button.MaterialButton(requireContext());
+        final com.google.android.material.button.MaterialButton stickerTab = new com.google.android.material.button.MaterialButton(requireContext());
+        emojiTab.setText(R.string.operatt_emojis);
+        stickerTab.setText(R.string.operatt_stickers);
+        tabs.addView(emojiTab, new LinearLayout.LayoutParams(0, -1, 1));
+        tabs.addView(stickerTab, new LinearLayout.LayoutParams(0, -1, 1));
+        final ScrollView scroll = new ScrollView(requireContext());
+        root.addView(scroll, new LinearLayout.LayoutParams(-1, toDp(275)));
+        final GridLayout emojiGrid = new GridLayout(requireContext());
+        emojiGrid.setColumnCount(6);
+        final String[] emojis = {"😀","😂","🥹","😍","😘","😎","😢","😭","😡","❤️","💙","💚","👍","👎","👏","🙏","🔥","✨","🎉","💪","🤝","👋","💯","🙌","🤔","😴","🥰","💔","😅","🤗","💐","🎂","💫","✅","👀","🙃"};
+        for (String emoji : emojis) {
+            TextView cell = new TextView(requireContext());
+            cell.setText(emoji);
+            cell.setTextSize(28);
+            cell.setGravity(Gravity.CENTER);
+            emojiGrid.addView(cell, new ViewGroup.LayoutParams(toDp(54), toDp(48)));
+            cell.setOnClickListener(v -> {
+                final int index = Math.max(0, binding.textinput.getSelectionStart());
+                binding.textinput.getText().insert(index, emoji);
+            });
+        }
+        final LinearLayout stickersPanel = new LinearLayout(requireContext());
+        stickersPanel.setOrientation(LinearLayout.VERTICAL);
+        final com.google.android.material.button.MaterialButton createSticker = new com.google.android.material.button.MaterialButton(requireContext());
+        createSticker.setText(R.string.operatt_create_sticker);
+        stickersPanel.addView(createSticker);
+        createSticker.setOnClickListener(v -> {
+            sheet.dismiss();
+            final Intent studio = new Intent(requireContext(), StickerStudioActivity.class);
+            studio.putExtra(StickerStudioActivity.EXTRA_SEND_TO_CHAT, true);
+            startActivityForResult(studio, ATTACHMENT_CHOICE_CHOOSE_FILE);
+        });
+        final GridLayout stickerGrid = new GridLayout(requireContext());
+        stickerGrid.setColumnCount(4);
+        stickersPanel.addView(stickerGrid);
+        final File folder = new File(new File(requireContext().getFilesDir(), "Images"), "Stickers");
+        final File[] files = folder.listFiles((parent, name) -> name.endsWith(".png"));
+        if (files != null) {
+            java.util.Arrays.sort(files, (a,b) -> Long.compare(b.lastModified(), a.lastModified()));
+            for (int n = 0; n < Math.min(files.length, 60); n++) {
+                final File file = files[n];
+                final ImageButton sticker = new ImageButton(requireContext());
+                sticker.setContentDescription(getString(R.string.operatt_send_sticker));
+                sticker.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                final BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inSampleSize = 4;
+                sticker.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), opts));
+                stickerGrid.addView(sticker, new ViewGroup.LayoutParams(toDp(76), toDp(76)));
+                sticker.setOnClickListener(v -> {
+                    sheet.dismiss();
+                    try {
+                        final Uri uri = FileBackend.getUriForFile(requireContext(), file);
+                        mediaPreviewAdapter.addMediaPreviews(Attachment.of(requireContext(), uri, Attachment.Type.IMAGE));
+                        toggleInputMethod();
+                        sendMessage();
+                    } catch (RuntimeException error) {
+                        Toast.makeText(requireContext(), R.string.operatt_sticker_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+        emojiTab.setOnClickListener(v -> { scroll.removeAllViews(); scroll.addView(emojiGrid); });
+        stickerTab.setOnClickListener(v -> { scroll.removeAllViews(); scroll.addView(stickersPanel); });
+        scroll.addView(emojiGrid);
+        sheet.setContentView(root);
+        sheet.show();
     }
 
     private void startSearch() {
@@ -3074,6 +3292,8 @@ public class ConversationFragment extends XmppFragment
         this.binding.textinput.setFocusable(canWrite);
         this.binding.textinput.setFocusableInTouchMode(canWrite);
         this.binding.textSendButton.setEnabled(canWrite);
+        this.binding.operattEmojiStickerButton.setEnabled(canWrite);
+        this.binding.operattInlineAttachButton.setEnabled(canWrite);
         this.binding.textinput.setCursorVisible(canWrite);
         this.binding.textinput.setEnabled(canWrite);
     }
@@ -3086,10 +3306,12 @@ public class ConversationFragment extends XmppFragment
         final Presence.Availability status;
         final String text = CharSequences.nullToEmpty(this.binding.textinput.getText());
         final SendButtonAction action;
-        if (hasAttachments) {
+        if (hasAttachments || !text.isEmpty()) {
             action = SendButtonAction.TEXT;
         } else {
-            action = SendButtonTool.getAction(getActivity(), c, text);
+            final SendButtonAction calculated = SendButtonTool.getAction(getActivity(), c, text);
+            action = calculated == SendButtonAction.CANCEL || calculated == SendButtonAction.SEND_LOCATION
+                    ? calculated : SendButtonAction.RECORD_VOICE;
         }
         if (c.getAccount().getStatus() == Account.State.ONLINE) {
             if (connection.getManager(MessageArchiveManager.class).isCatchingUp(c)) {
@@ -3108,9 +3330,13 @@ public class ConversationFragment extends XmppFragment
         this.binding.textSendButton.setTag(action);
         this.binding.textSendButton.setIconResource(
                 SendButtonTool.getSendButtonImageResource(action));
-        this.binding.textSendButton.setIconTint(
-                ColorStateList.valueOf(
-                        SendButtonTool.getSendButtonColor(this.binding.textSendButton, status)));
+        this.binding.textSendButton.setIconTint(ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(requireContext(),
+                        R.color.operatt_composer_icon_white)));
+        this.binding.textSendButton.setContentDescription(getString(
+                action == SendButtonAction.RECORD_VOICE ? R.string.attach_record_voice
+                        : action == SendButtonAction.SEND_LOCATION ? R.string.send_location
+                        : R.string.send_message));
     }
 
     protected void updateStatusMessages() {

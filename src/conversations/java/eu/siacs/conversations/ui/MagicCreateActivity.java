@@ -1,6 +1,9 @@
 package eu.siacs.conversations.ui;
 
 import android.content.Intent;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,6 +22,28 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
     public static final String EXTRA_DOMAIN = "domain";
     public static final String EXTRA_PRE_AUTH = "pre_auth";
     public static final String EXTRA_USERNAME = "username";
+
+    // UI-only enrollment gate. This is not a server-side anti-bot control.
+    // The server must also restrict registration to avoid bypass by modified clients.
+    private static final String REGISTRATION_CODE_SHA256 =
+            "7399ca79a4c7300b147d29ed398a9dc323d3846ef6d479d61705d434c851d1d3";
+
+    private static boolean isValidRegistrationCode(final String code) {
+        if (code == null) return false;
+        try {
+            final byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest(code.getBytes(StandardCharsets.UTF_8));
+            final byte[] expected = new byte[digest.length];
+            for (int i = 0; i < expected.length; i++) {
+                final int offset = i * 2;
+                expected[i] = (byte) Integer.parseInt(
+                        REGISTRATION_CODE_SHA256.substring(offset, offset + 2), 16);
+            }
+            return MessageDigest.isEqual(digest, expected);
+        } catch (NoSuchAlgorithmException error) {
+            return false;
+        }
+    }
 
     private ActivityMagicCreateBinding binding;
     private String domain;
@@ -54,6 +79,8 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
         } else if (domain != null) {
             binding.instructions.setText(getString(R.string.magic_create_text_on_x, domain));
         }
+        // Every new signup requires the user-provided access code. If an actual
+        // server-issued invitation token exists, it is still supplied separately.
         binding.createAccount.setOnClickListener(
                 v -> {
                     try {
@@ -80,6 +107,11 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             binding.passwordLayout.setError(
                                     getString(R.string.operatt_password_too_short));
                             binding.password.requestFocus();
+                        } else if (!isValidRegistrationCode(
+                                binding.registrationCode.getText().toString())) {
+                            binding.registrationCodeLayout.setError(
+                                    getString(R.string.operatt_invite_required));
+                            binding.registrationCode.requestFocus();
                         } else if (!password.equals(confirmPassword)) {
                             binding.passwordLayout.setError(null);
                             binding.confirmPasswordLayout.setError(
@@ -89,6 +121,8 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                             binding.usernameLayout.setError(null);
                             binding.passwordLayout.setError(null);
                             binding.confirmPasswordLayout.setError(null);
+                            binding.registrationCodeLayout.setError(null);
+                            final String invitationToken = this.preAuth;
                             Account account = xmppConnectionService.findAccountByJid(jid);
                             if (account == null) {
                                 account =
@@ -97,9 +131,8 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                                 account.setOption(Account.OPTION_DISABLED, true);
                                 account.setOption(Account.OPTION_MAGIC_CREATE, true);
                                 account.setOption(Account.OPTION_FIXED_USERNAME, fixedUsername);
-                                if (this.preAuth != null) {
-                                    account.setKey(
-                                            Account.KEY_PRE_AUTH_REGISTRATION_TOKEN, this.preAuth);
+                                if (invitationToken != null) {
+                                    account.setKey(Account.KEY_PRE_AUTH_REGISTRATION_TOKEN, invitationToken);
                                 }
                                 xmppConnectionService.createAccount(account);
                             }
@@ -150,7 +183,7 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher {
                 } else {
                     jid = Jid.ofLocalAndDomain(username, this.domain);
                 }
-                binding.fullJid.setText(getString(R.string.your_full_jid_will_be, jid.toString()));
+                binding.fullJid.setText(eu.siacs.conversations.ui.util.OperattHandle.display(jid.toString()));
                 binding.usernameLayout.setError(null);
             } catch (final IllegalArgumentException e) {
                 binding.fullJid.setVisibility(View.INVISIBLE);

@@ -105,6 +105,30 @@
                             android:autofillHints="newPassword" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/registration_code_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/operatt_invite_code">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/registration_code"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textVisiblePassword"
+                            android:importantForAutofill="no"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/registration_code_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="?textAppearanceBodySmall"
+                        android:text="@string/operatt_invite_explanation" />
+
                     <TextView
                         android:id="@+id/full_jid"
                         android:layout_width="wrap_content"
