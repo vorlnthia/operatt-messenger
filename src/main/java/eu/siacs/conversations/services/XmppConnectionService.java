@@ -1294,6 +1294,7 @@ public class XmppConnectionService extends Service {
         }
         destroyed = false;
         fileObserver.stopWatching();
+        unifiedPushBroker.stopPeriodicRenewal();
         internalPingExecutor.shutdown();
         super.onDestroy();
     }
