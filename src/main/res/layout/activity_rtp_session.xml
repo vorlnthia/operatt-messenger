@@ -196,6 +196,20 @@
             android:visibility="gone"
             app:tint="@android:color/white" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/operatt_audio_route_button"
+            style="?attr/floatingActionButtonSmallSurfaceStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/button_row"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@string/operatt_audio_output"
+            android:src="@drawable/ic_volume_up_24dp"
+            android:visibility="gone"
+            app:fabCustomSize="56dp"/>
+
         <RelativeLayout
             android:id="@+id/button_row"
             android:layout_width="match_parent"

@@ -1237,4 +1237,11 @@
     <string name="operatt_request_location">Request location</string>
     <string name="operatt_request_location_explained">Ask the person in this conversation to share their location? They must choose to share it from their phone.</string>
     <string name="operatt_location_request_message">Where are you?</string>
+    <string name="operatt_audio_output">Audio output</string>
+    <string name="operatt_route_earpiece">Phone earpiece</string>
+    <string name="operatt_route_speaker">Speaker</string>
+    <string name="operatt_route_bluetooth">Bluetooth headset</string>
+    <string name="operatt_route_wired">Wired headset</string>
+    <string name="operatt_route_streaming">External audio</string>
+    <string name="operatt_route_unavailable">No audio route available</string>
 </resources>
