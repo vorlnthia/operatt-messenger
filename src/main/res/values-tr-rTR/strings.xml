@@ -1185,4 +1185,7 @@
     <string name="operatt_profile_status">Bağlı hesap</string>
     <string name="operatt_profile_information">Profiliniz</string>
     <string name="operatt_profile_hint">Ad ve hesap ayarları için bilgileri düzenleyin. Hikâye ve gönderi özelliği henüz mevcut değil.</string>
+    <string name="operatt_check_family_location">Aile konumunu kontrol et</string>
+    <string name="operatt_family_location_requested">Konum sorgusu gönderildi. Paylaşım izni ve yakın tarihli konum varsa haritada görüntülenecektir.</string>
+    <string name="operatt_family_location_unavailable">Aile konumunu sorgulamak için bağlanın.</string>
 </resources>
