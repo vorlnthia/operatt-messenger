@@ -21,7 +21,7 @@
             android:defaultValue="@bool/enable_foreground_service"
             android:icon="@drawable/ic_settings_24dp"
             android:key="enable_foreground_service"
-            android:summary="@string/operatt_background_mode_summary"
+            android:summary="@string/operatt_background_mode_summary_v7"
             android:title="@string/operatt_background_mode_title" />
     </PreferenceCategory>
 

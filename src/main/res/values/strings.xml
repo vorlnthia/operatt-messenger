@@ -1244,4 +1244,5 @@
     <string name="operatt_route_wired">Wired headset</string>
     <string name="operatt_route_streaming">External audio</string>
     <string name="operatt_route_unavailable">No audio route available</string>
+    <string name="operatt_background_mode_summary_v7">Off saves battery and removes the persistent foreground activity, but messages and incoming calls may be delayed without a configured push gateway. On keeps the connection awake for more reliable calls.</string>
 </resources>
