@@ -14,11 +14,17 @@ import eu.siacs.conversations.ui.Activities;
 import eu.siacs.conversations.ui.XmppActivity;
 import eu.siacs.conversations.ui.fragment.settings.MainSettingsFragment;
 import eu.siacs.conversations.ui.fragment.settings.NotificationsSettingsFragment;
+import eu.siacs.conversations.ui.fragment.settings.InterfaceSettingsFragment;
+import eu.siacs.conversations.ui.fragment.settings.PrivacySettingsFragment;
+import eu.siacs.conversations.ui.fragment.settings.AttachmentsSettingsFragment;
+import eu.siacs.conversations.ui.fragment.settings.BackupSettingsFragment;
+import eu.siacs.conversations.ui.fragment.settings.ConnectionSettingsFragment;
 import eu.siacs.conversations.ui.fragment.settings.XmppPreferenceFragment;
 
 import java.util.Collections;
 
 public class SettingsActivity extends XmppActivity {
+    public static final String EXTRA_SECTION = "operatt.settings.section";
 
     @Override
     protected void refreshUiReal() {}
@@ -43,11 +49,21 @@ public class SettingsActivity extends XmppActivity {
         final var intent = getIntent();
         final var categories = intent == null ? Collections.emptySet() : intent.getCategories();
         final PreferenceFragmentCompat preferenceFragment;
-        if (ImmutableSet.of(Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES)
-                .equals(categories)) {
+        final String section = intent == null ? null : intent.getStringExtra(EXTRA_SECTION);
+        if (ImmutableSet.of(Notification.INTENT_CATEGORY_NOTIFICATION_PREFERENCES).equals(categories)) {
             preferenceFragment = new NotificationsSettingsFragment();
-        } else {
+        } else if (section == null) {
             preferenceFragment = new MainSettingsFragment();
+        } else {
+            preferenceFragment = switch (section) {
+                case "appearance" -> new InterfaceSettingsFragment();
+                case "privacy" -> new PrivacySettingsFragment();
+                case "notifications" -> new NotificationsSettingsFragment();
+                case "storage" -> new AttachmentsSettingsFragment();
+                case "backup" -> new BackupSettingsFragment();
+                case "connection" -> new ConnectionSettingsFragment();
+                default -> new MainSettingsFragment();
+            };
         }
 
         final var fragmentManager = getSupportFragmentManager();

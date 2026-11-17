@@ -1,122 +1,232 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+ android:orientation="vertical" android:background="?colorSurface">
+ <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+  <LinearLayout android:id="@+id/operatt_chats_panel" android:layout_width="match_parent" android:layout_height="match_parent"
+   android:orientation="vertical">
+   <LinearLayout android:layout_width="match_parent" android:layout_height="62dp" android:orientation="horizontal"
+    android:gravity="center_vertical" android:paddingHorizontal="12dp">
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_menu_button"
+     style="?attr/materialIconButtonOutlinedStyle" android:layout_width="46dp" android:layout_height="46dp"
+     android:contentDescription="@string/operatt_main_menu" app:icon="@drawable/ic_operatt_menu_24dp" app:iconTint="?colorPrimary"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+     android:layout_marginStart="10dp" android:text="@string/app_name"
+     android:textColor="?colorPrimary" android:textStyle="bold" android:textSize="23sp"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_search_button"
+     style="?attr/materialIconButtonOutlinedStyle" android:layout_width="46dp" android:layout_height="46dp"
+     android:contentDescription="@string/operatt_search_chats" app:icon="@drawable/ic_search_24dp" app:iconTint="?colorOnSurface"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_accounts_button"
+     style="?attr/materialIconButtonOutlinedStyle" android:layout_width="46dp" android:layout_height="46dp"
+     android:layout_marginStart="4dp" android:contentDescription="@string/operatt_switch_accounts"
+     app:icon="@drawable/ic_person_add_24dp" app:iconTint="?colorOnSurface"/>
+   </LinearLayout>
+   <LinearLayout android:layout_width="match_parent" android:layout_height="54dp"
+    android:layout_marginHorizontal="14dp" android:layout_marginBottom="6dp" android:orientation="horizontal"
+    android:gravity="center_vertical" android:background="@drawable/operatt_home_pill">
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_all_chats_button"
+     style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="42dp"
+     android:layout_weight="1" android:layout_marginStart="5dp" android:text="@string/operatt_tab_chats"
+     android:textColor="?colorPrimary" app:cornerRadius="24dp"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_account_filter_button"
+     style="?attr/materialButtonOutlinedStyle" android:layout_width="0dp" android:layout_height="42dp"
+     android:layout_weight="1" android:layout_marginEnd="5dp" android:singleLine="true"
+     android:ellipsize="end" android:text="@string/operatt_select_account"
+     android:textColor="?colorOnSurfaceVariant" android:textSize="12sp" app:cornerRadius="24dp"/>
+   </LinearLayout>
+   <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/list" android:layout_width="match_parent"
+     android:layout_height="match_parent" android:clipToPadding="false" android:paddingBottom="80dp" android:scrollbars="vertical"/>
+    <RelativeLayout android:id="@+id/empty_chat_hint" android:visibility="gone" android:layout_width="match_parent"
+     android:layout_height="wrap_content" android:layout_gravity="center" android:paddingHorizontal="38dp">
+      <ImageView android:id="@+id/empty_chat_hint_image" android:layout_width="48dp" android:layout_height="48dp"
+       android:layout_centerHorizontal="true" android:src="@drawable/ic_forum_thin_48dp" app:tint="?colorPrimary"/>
+      <TextView android:id="@+id/empty_chat_hint_text" android:layout_width="match_parent"
+       android:layout_height="wrap_content" android:layout_below="@+id/empty_chat_hint_image"
+       android:layout_marginTop="12dp" android:gravity="center" android:text="@string/empty_conversations_list_hint"
+       android:textColor="?colorOnSurfaceVariant" android:textAppearance="?textAppearanceBodyMedium"/>
+    </RelativeLayout>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton android:id="@+id/fab"
+     android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end"
+     android:layout_margin="20dp" android:text="@string/operatt_new_chat"
+     android:backgroundTint="?colorPrimary" android:textColor="?colorOnPrimary"
+     app:icon="@drawable/ic_add_24dp" app:iconTint="?colorOnPrimary"/>
+   </FrameLayout>
+  </LinearLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:background="?colorSurface"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+  <LinearLayout android:id="@+id/operatt_contacts_panel" android:layout_width="match_parent" android:layout_height="match_parent"
+   android:orientation="vertical" android:visibility="gone">
+   <LinearLayout android:layout_width="match_parent" android:layout_height="74dp"
+    android:paddingHorizontal="18dp" android:gravity="center_vertical" android:orientation="horizontal">
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+     android:text="@string/operatt_tab_contacts" android:textColor="?colorOnSurface" android:textSize="27sp" android:textStyle="bold"/>
+    <com.google.android.material.button.MaterialButton android:id="@+id/operatt_contact_add_button"
+     style="?attr/materialIconButtonOutlinedStyle" android:layout_width="50dp" android:layout_height="50dp"
+     android:contentDescription="@string/operatt_new_chat" app:icon="@drawable/ic_person_add_24dp" app:iconTint="?colorPrimary"/>
+   </LinearLayout>
+   <TextView android:id="@+id/operatt_contacts_hint" android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:paddingHorizontal="20dp" android:paddingVertical="8dp" android:text="@string/operatt_contacts_hint"
+    android:textColor="?colorOnSurfaceVariant"/>
+   <ListView android:id="@+id/operatt_contacts_list" android:layout_width="match_parent"
+    android:layout_height="0dp" android:layout_weight="1" android:dividerHeight="0dp"/>
+  </LinearLayout>
 
+  <ScrollView android:id="@+id/operatt_settings_panel" android:layout_width="match_parent" android:layout_height="match_parent"
+   android:visibility="gone" android:fillViewport="true" android:background="?colorSurfaceContainerLow">
+   <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="14dp" android:orientation="vertical">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="5dp"
+     android:paddingTop="14dp" android:paddingBottom="20dp"
+     android:text="@string/operatt_tab_settings" android:textSize="29sp" android:textStyle="bold" android:textColor="?colorOnSurface"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+     android:orientation="vertical" android:background="@drawable/operatt_home_card">
+     <LinearLayout android:id="@+id/operatt_settings_account" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_person_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_tab_account"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_account_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_appearance" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_chat_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_appearance_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_appearance_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_privacy" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_privacy_tip_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_privacy_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_privacy_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_notifications" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_notifications_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_notifications_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_notifications_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_storage" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_folder_open_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_storage_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_storage_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_backup" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_cloud_sync_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_backup_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_backup_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_connection" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_settings_ethernet_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_connection_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_connection_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_accounts" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_person_add_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_accounts_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_accounts_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+<LinearLayout android:id="@+id/operatt_settings_stickers" android:layout_width="match_parent" android:layout_height="wrap_content"
+ android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:paddingVertical="13dp"
+ android:clickable="true" android:focusable="true" android:background="?attr/selectableItemBackground">
+<ImageView android:layout_width="38dp" android:layout_height="38dp" android:padding="7dp"
+ android:src="@drawable/ic_image_24dp" app:tint="?colorPrimary" />
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/operatt_settings_stickers_title"
+ android:textColor="?colorOnSurface" android:textSize="16sp" android:textStyle="bold" />
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp"
+ android:text="@string/operatt_settings_stickers_hint" android:textSize="12sp" android:textColor="?colorOnSurfaceVariant" />
+</LinearLayout></LinearLayout>
+    </LinearLayout>
+   </LinearLayout>
+  </ScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="8dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/operatt_menu_button"
-                    style="?attr/materialIconButtonOutlinedStyle"
-                    android:layout_width="44dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="6dp"
-                    android:contentDescription="@string/operatt_main_menu"
-                    app:icon="@drawable/ic_operatt_menu_24dp"
-                    app:iconTint="?colorPrimary" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/operatt_search_button"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/operatt_search_chats"
-                    android:backgroundTint="?colorSurfaceContainer"
-                    android:textColor="?colorOnSurfaceVariant"
-                    app:cornerRadius="24dp"
-                    app:icon="@drawable/ic_search_24dp"
-                    app:iconTint="?colorOnSurfaceVariant" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/operatt_accounts_button"
-                    style="?attr/materialIconButtonFilledTonalStyle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="8dp"
-                    android:contentDescription="@string/operatt_switch_accounts"
-                    app:iconTint="?colorPrimary"
-                    app:icon="@drawable/ic_person_add_24dp" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/operatt_account_filter_button"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginBottom="4dp"
-                android:gravity="start|center_vertical"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:text="@string/operatt_select_account"
-                android:textColor="?colorPrimary"
-                android:textSize="13sp"
-                app:cornerRadius="14dp"
-                app:icon="@drawable/ic_person_add_24dp"
-                app:iconTint="?colorPrimary" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:scrollbars="vertical" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:visibility="gone"
-            android:id="@+id/empty_chat_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="48dp">
-
-            <ImageView
-                android:id="@+id/empty_chat_hint_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_forum_thin_48dp"
-                app:tint="?colorPrimary" />
-
-            <TextView
-                android:id="@+id/empty_chat_hint_text"
-                style="?textAppearanceBodyMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_chat_hint_image"
-                android:gravity="center"
-                android:text="@string/empty_conversations_list_hint" />
-        </RelativeLayout>
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            android:text="@string/start_chat"
-            android:backgroundTint="?colorPrimary"
-            android:textColor="?colorOnPrimary"
-            app:iconTint="?colorOnPrimary"
-            app:icon="@drawable/ic_chat_24dp" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+  <ScrollView android:id="@+id/operatt_profile_panel" android:layout_width="match_parent" android:layout_height="match_parent"
+   android:visibility="gone" android:background="?colorSurfaceContainerLow" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+     android:paddingHorizontal="16dp" android:paddingTop="24dp" android:paddingBottom="20dp" android:gravity="center_horizontal">
+     <com.google.android.material.imageview.ShapeableImageView android:id="@+id/operatt_profile_avatar"
+      android:layout_width="106dp" android:layout_height="106dp" android:contentDescription="@string/operatt_tab_profile"
+      android:src="@drawable/ic_person_48dp" app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"/>
+     <TextView android:id="@+id/operatt_profile_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:layout_marginTop="14dp" android:gravity="center" android:text="@string/operatt_tab_profile"
+      android:textColor="?colorOnSurface" android:textSize="25sp" android:textStyle="bold"/>
+     <TextView android:id="@+id/operatt_profile_jid" android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:layout_marginTop="4dp" android:gravity="center" android:text="@string/operatt_select_account"
+      android:textColor="?colorOnSurfaceVariant" android:textSize="14sp"/>
+     <TextView android:id="@+id/operatt_profile_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:layout_marginTop="4dp" android:gravity="center" android:text="@string/operatt_profile_status"
+      android:textColor="?colorPrimary" android:textSize="13sp"/>
+     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:layout_marginTop="26dp" android:orientation="horizontal" android:gravity="center">
+       <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_photo_button"
+        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        android:layout_weight="1" android:layout_marginHorizontal="3dp"
+        android:text="@string/operatt_profile_photo" app:icon="@drawable/ic_camera_alt_24dp" app:iconGravity="textTop"/>
+       <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_edit_button"
+        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        android:layout_weight="1" android:layout_marginHorizontal="3dp"
+        android:text="@string/operatt_profile_edit" app:icon="@drawable/ic_edit_24dp" app:iconGravity="textTop"/>
+       <com.google.android.material.button.MaterialButton android:id="@+id/operatt_profile_manage_button"
+        style="?attr/materialButtonTonalButtonStyle" android:layout_width="0dp" android:layout_height="68dp"
+        android:layout_weight="1" android:layout_marginHorizontal="3dp"
+        android:text="@string/operatt_settings_accounts_title" app:icon="@drawable/ic_settings_24dp" app:iconGravity="textTop"/>
+     </LinearLayout>
+     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+      android:layout_marginTop="24dp" android:padding="20dp" android:orientation="vertical"
+      android:background="@drawable/operatt_home_card">
+       <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/operatt_profile_information" android:textColor="?colorOnSurface" android:textSize="18sp" android:textStyle="bold"/>
+       <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+        android:text="@string/operatt_profile_hint" android:textColor="?colorOnSurfaceVariant" android:textSize="14sp"/>
+     </LinearLayout>
+    </LinearLayout>
+  </ScrollView>
+ </FrameLayout>
+ <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/operatt_bottom_nav"
+  android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:minHeight="70dp" android:background="?colorSurface" app:menu="@menu/operatt_bottom_navigation"
+  app:labelVisibilityMode="labeled" app:itemIconSize="24dp" app:itemActiveIndicatorColor="?colorPrimaryContainer"
+  app:itemTextColor="@color/operatt_nav_icon_tint" app:itemIconTint="@color/operatt_nav_icon_tint"/>
+</LinearLayout></layout>
